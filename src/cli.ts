@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { configureRuntimeContext } from "@agent-ix/ix-cli-core";
 import {
@@ -34,6 +36,10 @@ Global flags:
 
 export async function main(argv: string[]): Promise<void> {
   const parsed = parseArgs(argv);
+  if (parsed.flags.version || parsed.flags.v || parsed.command === "version") {
+    console.log(packageVersion());
+    return;
+  }
   if (!parsed.command || parsed.flags.help || parsed.flags.h) {
     console.log(USAGE);
     return;
@@ -119,6 +125,17 @@ export async function main(argv: string[]): Promise<void> {
     default:
       throw usageError(`unknown command ${parsed.command}`);
   }
+}
+
+export function packageVersion(): string {
+  const packageRoot = dirname(dirname(fileURLToPath(import.meta.url)));
+  const packageJson = JSON.parse(
+    readFileSync(join(packageRoot, "package.json"), "utf8"),
+  ) as { version?: unknown };
+  if (typeof packageJson.version !== "string") {
+    throw new Error("package.json version is missing");
+  }
+  return packageJson.version;
 }
 
 function parseArgs(argv: string[]): ParsedArgs {
