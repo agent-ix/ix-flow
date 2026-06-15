@@ -4,11 +4,11 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { configureRuntimeContext } from "@agent-ix/ix-cli-core";
+import { WorkflowCommandRunner } from "./workflow-runner/runner.js";
 import {
-  WorkflowCommandRunner,
   jsonEnvelope,
-} from "@agent-ix/workflow-cli-plugin";
-import type { WorkflowResultEnvelope } from "@agent-ix/workflow-cli-plugin";
+  type WorkflowResultEnvelope,
+} from "./workflow-runner/result.js";
 
 interface ParsedArgs {
   command?: string;
@@ -57,7 +57,7 @@ export async function main(argv: string[]): Promise<void> {
   const runner = new WorkflowCommandRunner({
     config: {
       stateDir: stringFlag(parsed, "state-dir") ?? join(configRoot, "flows"),
-      defaultDefinition: "spec-analysis",
+      defaultDefinition: "workflow",
       output: parsed.flags.json ? "json" : "human",
     },
     actor: { kind: "agent", id: "ix-flow" },

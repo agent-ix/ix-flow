@@ -10,7 +10,7 @@ It is not intended to be a general BPM or workflow automation engine.
 
 ```bash
 ix-flow run <flow>
-ix-flow run write-fr --path ../ix-spec-workflows/skills/write-fr
+ix-flow run review --path ../ix-spec/skills/spec-review
 ix-flow status <run-id>
 ix-flow resume <run-id>
 ix-flow advance <run-id> <phase>
@@ -30,5 +30,5 @@ pnpm test
 pnpm run lint
 ```
 
-This package builds on `@agent-ix/ix-cli-core@0.10.0` from the standalone
+This package builds on `@agent-ix/ix-cli-core@0.10.1` from the standalone
 `ix-cli-core` repo.
