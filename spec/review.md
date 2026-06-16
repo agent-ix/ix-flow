@@ -1,7 +1,7 @@
 ---
 id: Review-001
 title: ix-flow Phase 0 Review
-artifact_type: Review
+type: Review
 ---
 
 # ix-flow Phase 0 Review

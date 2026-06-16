@@ -1,5 +1,5 @@
 ---
-artifact_type: master-requirements
+type: master-requirements
 name: ix-flow
 org: agent-ix
 component_type: cli

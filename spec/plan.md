@@ -1,7 +1,7 @@
 ---
 id: Plan-001
 title: ix-flow Implementation Plan
-artifact_type: Plan
+type: Plan
 ---
 
 # ix-flow Implementation Plan
