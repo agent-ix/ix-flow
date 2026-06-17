@@ -4,6 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { configureRuntimeContext } from "@agent-ix/ix-cli-core";
+import type { JsonValue } from "./workflow-core/index.js";
 import { WorkflowCommandRunner } from "./workflow-runner/runner.js";
 import {
   jsonEnvelope,
@@ -26,6 +27,12 @@ Usage:
   ix-flow resume <run-id>
   ix-flow advance <run-id> <phase>
   ix-flow ack <run-id> <token> [--reviewer <id>] [--kind <kind>] [--note <text>]
+  ix-flow record-answers <run-id> <interview-id> (--answers <json> | --answers-file <path>) [--merge]
+  ix-flow recipe <run-id> <recipe-name>
+  ix-flow add-item <run-id> <type> (--item <json> | --item-file <path>)
+  ix-flow update-item <run-id> <type> <item-id> (--patch <json> | --patch-file <path>)
+  ix-flow link-items <run-id> (--link <json> | --link-file <path>)
+  ix-flow verify <run-id>
   ix-flow history <run-id>
 
 Global flags:
@@ -116,6 +123,71 @@ export async function main(argv: string[]): Promise<void> {
       );
       return;
     }
+    case "record-answers": {
+      const [id, interviewId] = parsed.positionals;
+      if (!id || !interviewId)
+        throw usageError("record-answers requires <run-id> <interview-id>");
+      const answers = jsonFlag(parsed, "answers", "record-answers --answers");
+      if (answers === undefined)
+        throw usageError("record-answers requires --answers or --answers-file");
+      if (
+        typeof answers !== "object" ||
+        answers === null ||
+        Array.isArray(answers)
+      )
+        throw usageError("record-answers --answers must be a JSON object");
+      await emit(
+        await runner.recordAnswers({
+          id,
+          interviewId,
+          answers: answers as Record<string, JsonValue>,
+          merge: parsed.flags.merge === true,
+        }),
+        parsed,
+      );
+      return;
+    }
+    case "recipe": {
+      const [id, name] = parsed.positionals;
+      if (!id || !name)
+        throw usageError("recipe requires <run-id> <recipe-name>");
+      await emit(await runner.runRecipe({ id, name }), parsed);
+      return;
+    }
+    case "add-item": {
+      const [id, type] = parsed.positionals;
+      if (!id || !type) throw usageError("add-item requires <run-id> <type>");
+      const item = jsonFlag(parsed, "item", "add-item --item");
+      if (item === undefined)
+        throw usageError("add-item requires --item or --item-file");
+      await emit(await runner.addItem({ id, type, item }), parsed);
+      return;
+    }
+    case "update-item": {
+      const [id, type, itemId] = parsed.positionals;
+      if (!id || !type || !itemId)
+        throw usageError("update-item requires <run-id> <type> <item-id>");
+      const patch = jsonFlag(parsed, "patch", "update-item --patch");
+      if (patch === undefined)
+        throw usageError("update-item requires --patch or --patch-file");
+      await emit(await runner.updateItem({ id, type, itemId, patch }), parsed);
+      return;
+    }
+    case "link-items": {
+      const [id] = parsed.positionals;
+      if (!id) throw usageError("link-items requires <run-id>");
+      const link = jsonFlag(parsed, "link", "link-items --link");
+      if (link === undefined)
+        throw usageError("link-items requires --link or --link-file");
+      await emit(await runner.linkItems({ id, link }), parsed);
+      return;
+    }
+    case "verify": {
+      const [id] = parsed.positionals;
+      if (!id) throw usageError("verify requires <run-id>");
+      await emit(await runner.verifyChain(id), parsed);
+      return;
+    }
     case "history": {
       const [id] = parsed.positionals;
       if (!id) throw usageError("history requires <run-id>");
@@ -188,6 +260,9 @@ async function emit(
     if (result.open_gates?.length) {
       console.log(`open gates: ${result.open_gates.length}`);
     }
+    emitChainVerification(result);
+    emitRecipeSteps(result);
+    emitInterviewFollowups(result);
     for (const action of result.nextActions ?? [])
       console.log(`next: ${action}`);
   } else if (result.state === "gate_deferred") {
@@ -198,6 +273,7 @@ async function emit(
     if (result.current_phase) console.log(`phase: ${result.current_phase}`);
     for (const gate of result.open_gates ?? [])
       console.log(`gate: ${gate.token} (to ${gate.to})`);
+    emitRecipeSteps(result);
     for (const action of result.nextActions ?? [])
       console.log(`next: ${action}`);
   } else {
@@ -205,6 +281,33 @@ async function emit(
       `${result.error?.code ?? "workflow_error"}: ${result.error?.message ?? "workflow command failed"}`,
     );
     process.exitCode = 1;
+  }
+}
+
+function emitChainVerification(result: WorkflowResultEnvelope): void {
+  if (result.command !== "verify-chain") return;
+  const v = result.data as
+    | { ok?: boolean; firstBreakIndex?: number }
+    | undefined;
+  if (v?.ok) {
+    console.log("chain: intact");
+  } else {
+    console.log(`chain: BROKEN at event ${v?.firstBreakIndex ?? "?"}`);
+  }
+}
+
+function emitRecipeSteps(result: WorkflowResultEnvelope): void {
+  for (const step of result.recipe_steps ?? []) {
+    const outcome = step.ok ? (step.state ?? "ok") : "failed";
+    console.log(`step ${step.index}: ${step.command} -> ${outcome}`);
+  }
+}
+
+function emitInterviewFollowups(result: WorkflowResultEnvelope): void {
+  for (const followup of result.interview_followups ?? []) {
+    console.log(
+      `follow-up (${followup.interviewId}.${followup.questionKey}): ${followup.prompt}`,
+    );
   }
 }
 
@@ -218,6 +321,41 @@ function arrayFlag(parsed: ParsedArgs, key: string): string[] {
   if (Array.isArray(value)) return value;
   if (typeof value === "string") return [value];
   return [];
+}
+
+/**
+ * Read a JSON value from `--<key> <json>` (inline) or `--<key>-file <path>`.
+ * Returns undefined when neither flag is present. Throws a usage error on
+ * malformed JSON or an unreadable file so the caller surfaces guidance.
+ */
+function jsonFlag(
+  parsed: ParsedArgs,
+  key: string,
+  label: string,
+): JsonValue | undefined {
+  const inline = stringFlag(parsed, key);
+  const filePath = stringFlag(parsed, `${key}-file`);
+  let text: string;
+  if (inline !== undefined) {
+    text = inline;
+  } else if (filePath !== undefined) {
+    try {
+      text = readFileSync(filePath, "utf8");
+    } catch (err) {
+      throw usageError(
+        `${label}-file could not be read: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+  } else {
+    return undefined;
+  }
+  try {
+    return JSON.parse(text) as JsonValue;
+  } catch (err) {
+    throw usageError(
+      `${label} is not valid JSON: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
 }
 
 function usageError(message: string): Error {

@@ -1,0 +1,38 @@
+name: intake
+version: 0.1.0
+description: Collect a request through a short interview, then draft and finish.
+initialPhase: collecting
+phases:
+  - { name: collecting }
+  - { name: drafting }
+  - { name: done, terminal: true }
+transitions:
+  - from: collecting
+    to: drafting
+    invariants:
+      - "interview.complete:request"
+    defaultGate: auto
+  - from: drafting
+    to: done
+    defaultGate: auto
+itemSchemas:
+  request: {}
+interviews:
+  request:
+    itemType: request
+    completenessRule: all_required
+    questions:
+      - key: title
+        prompt: "What should this request be called?"
+        type: text
+        required: true
+      - key: summary
+        prompt: "Summarize what is being asked for."
+        type: text
+        required: true
+recipes:
+  finish:
+    description: Advance from drafting to done in one step.
+    steps:
+      - command: advance
+        to: done
