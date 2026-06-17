@@ -190,6 +190,16 @@ async function emit(
     }
     for (const action of result.nextActions ?? [])
       console.log(`next: ${action}`);
+  } else if (result.state === "gate_deferred") {
+    // A deferred human gate is an expected outcome, not an error: surface the
+    // gate token and next actions so the run can be acknowledged and retried.
+    console.log(`${result.command}: ${result.state}`);
+    if (result.instance_id) console.log(`run: ${result.instance_id}`);
+    if (result.current_phase) console.log(`phase: ${result.current_phase}`);
+    for (const gate of result.open_gates ?? [])
+      console.log(`gate: ${gate.token} (to ${gate.to})`);
+    for (const action of result.nextActions ?? [])
+      console.log(`next: ${action}`);
   } else {
     console.error(
       `${result.error?.code ?? "workflow_error"}: ${result.error?.message ?? "workflow command failed"}`,
