@@ -11,9 +11,6 @@ a small state machine of phases, transitions, and human gates — by calling `ix
 track where the run is, advance it, and pause for human approval. Runs persist, so an agent
 can resume one across sessions.
 
-It is not meant to be driven by hand: `ix-flow` is the surface an agent harness (Claude,
-Codex, …) calls to drive a flow.
-
 ## The pattern: define a flow, then create a skill to run it
 
 1. **Define a flow** — a `def.yaml` describing phases, transitions, gates, and invariants.
