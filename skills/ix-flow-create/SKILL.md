@@ -37,7 +37,7 @@ Create a new `ix-flow` workflow: a **flow** that declares the states and moves, 
      - { from: <first-phase>, to: <last-phase>, defaultGate: auto } # or hitl
    ```
 
-   See `docs/usage.md` for the full field reference (gate modes, built-in invariants, custom
+   See `docs/guide.md` for the full field reference (gate modes, built-in invariants, custom
    `scripts/invariants.js`).
 
 3. **Write the skill** at `<name>/SKILL.md`. Frontmatter must declare the workflows dir; the

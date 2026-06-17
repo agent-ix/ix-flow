@@ -78,7 +78,7 @@ phases, and stop at the human gate until the change is approved.
 ```
 
 Run `/ix-flow-create` and your agent scaffolds both files for you. See
-[`docs/usage.md`](docs/usage.md) for the full authoring reference; a complete, runnable
+[`docs/guide.md`](docs/guide.md) for the full authoring reference; a complete, runnable
 version of this workflow is in [`examples/release`](examples/release).
 
 ## Use a workflow

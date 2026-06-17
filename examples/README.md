@@ -36,4 +36,4 @@ intake/
 Ask your agent to run it; it conducts the interview, records the answers, advances past the
 interview gate, and finishes.
 
-See [`../docs/usage.md`](../docs/usage.md) to author your own flow and skill.
+See [`../docs/guide.md`](../docs/guide.md) to author your own flow and skill.
