@@ -6,9 +6,24 @@
 
 # IX Flow
 
-`ix-flow` is the Agent IX workflow runner CLI. It drives agent-oriented flows defined as
-small state machines — phases, transitions, human-in-the-loop gates — with persisted,
-event-chained run state and resume/status/ack operations.
+`ix-flow` is the Agent IX workflow lifecycle runner. An agent runs a workflow — defined as
+a small state machine of phases, transitions, and human gates — by calling `ix-flow` to
+track where the run is, advance it, and pause for human approval. Runs persist, so an agent
+can resume one across sessions.
+
+It is not meant to be driven by hand: `ix-flow` is the surface an agent harness (Claude,
+Codex, …) calls to drive a flow.
+
+## The pattern: define a flow, then create a skill to run it
+
+1. **Define a flow** — a `def.yaml` describing phases, transitions, gates, and invariants.
+2. **Create a skill** — a `SKILL.md` that points at the flow and tells the agent how to
+   drive it (start from status, follow the next actions, record progress, stop at gates).
+3. **An agent runs it** — the agent invokes the skill and calls `ix-flow` to create a run
+   and advance it through the flow, pausing where a human gate requires approval.
+
+[`ix-spec`](https://github.com/agent-ix/ix-spec) is a real consumer: `ix-spec review`
+launches a spec-review flow and hands lifecycle control to `ix-flow`.
 
 ## Install
 
@@ -16,43 +31,36 @@ event-chained run state and resume/status/ack operations.
 npm i -g @agent-ix/ix-flow
 ```
 
-Or run from a clone after `pnpm install && pnpm run build`:
-
-```bash
-node bin/ix-flow.js --help
-```
-
 ## Quickstart
 
-Run the bundled [`examples/release`](examples/release) workflow — `draft → in_review →
-approved`, with a human gate on the final step. `--state-dir` keeps this run out of your
-real state directory.
+Run the bundled [`examples/release`](examples/release) flow — `draft → in_review →
+approved`, with a human gate on the final step. The agent drives the run with `ix-flow`:
 
 ```bash
-# Create a run from a skill directory (path mode).
-ix-flow run release --path examples/release --state-dir /tmp/flow
+# Create a run from a workflow skill.
+ix-flow run release --path examples/release
 # create: ok
 # run: <run-id>
 # phase: draft
 
-# Advance through an automatic transition.
-ix-flow advance <run-id> in_review --state-dir /tmp/flow
+# Advance through the flow's phases.
+ix-flow advance <run-id> in_review
 # phase: in_review
 
-# The next transition is gated; it defers and prints the gate token.
-ix-flow advance <run-id> approved --state-dir /tmp/flow
+# The final transition is a human gate; it pauses and reports the gate token.
+ix-flow advance <run-id> approved
 # advance: gate_deferred
 # gate: ack_... (to approved)
 # next: ix-flow ack <run-id> ack_... --reviewer <user>
 
-# Acknowledge the gate, then advance again.
-ix-flow ack <run-id> <token> --reviewer me --state-dir /tmp/flow
-ix-flow advance <run-id> approved --state-dir /tmp/flow
+# A human approves; the run continues to the terminal phase.
+ix-flow ack <run-id> <token> --reviewer alice
+ix-flow advance <run-id> approved
 # phase: approved
-
-ix-flow status <run-id> --state-dir /tmp/flow
-ix-flow history <run-id> --state-dir /tmp/flow
 ```
+
+Agents read machine output by adding `--json` to any command (see
+[`docs/usage.md`](docs/usage.md)).
 
 ## Commands
 
@@ -60,27 +68,22 @@ ix-flow history <run-id> --state-dir /tmp/flow
 | --------------------------- | ---------------------------------------------------------- |
 | `run <flow> [--path <dir>]` | Create a run from a registered definition or skill dir.    |
 | `status <run-id>`           | Show current phase, open gates, and next actions.          |
-| `resume <run-id>`           | Re-emit status for an in-progress run.                     |
-| `advance <run-id> <phase>`  | Move to the next phase (may defer on a gate or invariant). |
-| `ack <run-id> <token>`      | Acknowledge a deferred human gate.                         |
+| `resume <run-id>`           | Pick a run back up (e.g. in a new agent session).          |
+| `advance <run-id> <phase>`  | Move to the next phase (may pause on a gate or invariant). |
+| `ack <run-id> <token>`      | Record human approval for a paused gate.                   |
 | `history <run-id>`          | Show the run's event log.                                  |
-
-Add `--json` to any command for the full result envelope. See
-[`docs/usage.md`](docs/usage.md) for flags, output fields, and authoring.
 
 ## Concepts
 
-- **Run** — one instance of a workflow definition, identified by a run id.
+- **Flow** — a workflow definition: phases, transitions, gates, invariants (`def.yaml`).
+- **Run** — one live instance of a flow, identified by a run id.
 - **Phase** — a named state; a run sits in exactly one phase at a time.
-- **Transition** — a declared `from → to` move between phases.
-- **Gate** — a `hitl` transition defers until acknowledged with `ack`.
+- **Transition** — a declared `from → to` move the agent makes with `advance`.
+- **Gate** — a `hitl` transition pauses for human approval, recorded with `ack`.
 - **Invariant** — a predicate that must hold before a transition succeeds.
-- **State** — each run is an append-only, hash-chained event log on disk.
+- **State** — each run is an append-only, hash-chained event log under `~/.ix/flows`.
 
-## State location
-
-State defaults to `~/.ix/flows`. Override with `--state-dir <dir>` for isolated runs, or
-`--config-root <dir>` to relocate the whole `~/.ix` root.
+See [`docs/usage.md`](docs/usage.md) to author your own flow and skill.
 
 ## Development
 

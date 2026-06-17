@@ -1,54 +1,45 @@
 # ix-flow usage
 
-`ix-flow` runs agent-oriented workflows defined as state machines. This guide covers the
-model, how to author a workflow, the command reference, and JSON output.
+`ix-flow` is the lifecycle runner an agent calls to run a workflow. This guide covers the
+model, how to author a flow and the skill that runs it, the command reference, and the JSON
+output agents consume.
 
 ## Model
 
-- **Run** — one live instance of a workflow definition, addressed by a run id.
+- **Flow** — a workflow definition (`def.yaml`): phases, transitions, gates, invariants.
+- **Run** — one live instance of a flow, addressed by a run id.
 - **Phase** — a named state. A run is always in exactly one phase, starting at
   `initialPhase`. A phase marked `terminal` ends the run.
-- **Transition** — a declared `from → to` edge. `advance` follows one transition.
+- **Transition** — a declared `from → to` edge. The agent makes one with `advance`.
 - **Invariant** — a named predicate checked before a transition commits. If it fails, the
-  advance is rejected and the run stays put.
-- **Gate** — a transition's approval mode: `auto` commits immediately, `hitl` defers until
-  a human acknowledges it with `ack`.
+  `advance` is rejected and the run stays put until the agent satisfies it.
+- **Gate** — a transition's approval mode: `auto` commits immediately, `hitl` pauses for a
+  human, recorded with `ack`.
 - **Event log** — each run is an append-only, hash-chained list of events
   (`workflow.created`, `phase.advanced`, `gate.deferred`, `gate.acknowledged`, …).
   `history` prints it.
 
-## Authoring a workflow
+## Authoring: define a flow, then create a skill to run it
 
-A workflow ships inside a **skill directory**:
+A flow and its skill ship together in a **skill directory**:
 
 ```
 my-skill/
-  SKILL.md                      # frontmatter points at the workflows dir
+  SKILL.md                      # instructions the agent follows to run the flow
   workflows/
     <name>/
-      def.yaml                  # one workflow definition per subdirectory
+      def.yaml                  # the flow: phases, transitions, gates, invariants
   scripts/
     invariants.js               # optional custom invariants (ESM)
 ```
 
-`SKILL.md` frontmatter must declare where the workflows live:
+### 1. Define the flow
 
-```markdown
----
-name: my-skill
-description: What this skill does.
-contributes:
-  workflows: ./workflows
----
-```
-
-Each subdirectory of `workflows/` that contains a `def.yaml` becomes one workflow, named by
-its `name:` field.
-
-### def.yaml reference
+Each subdirectory of `workflows/` that contains a `def.yaml` is one flow, named by its
+`name:` field.
 
 ```yaml
-name: release # workflow name (used by `run <name>`)
+name: release # flow name (used by `ix-flow run <name>`)
 version: 0.1.0 # definition version
 description: Drive a change from draft to release.
 initialPhase: draft # must be one of the phases below
@@ -63,8 +54,18 @@ transitions:
     invariants: [] # names checked before the move
   - from: in_review
     to: approved
-    defaultGate: hitl # defers until `ack`
+    defaultGate: hitl # pauses for human approval
 ```
+
+Each construct maps to how the agent drives the run:
+
+- **phases** — the run sits in exactly one; the agent moves between them with `advance`.
+- **transitions** — the legal `advance` moves; advancing to an undeclared phase is rejected.
+- **defaultGate: hitl** — `advance` pauses (`gate_deferred`); the agent must obtain an
+  `ack` before advancing again.
+- **invariants** — checked on `advance`; a failure blocks the move until the agent makes it
+  hold.
+- **terminal** — reaching this phase ends the run.
 
 Built-in invariants you can list under a transition's `invariants:`:
 
@@ -86,14 +87,34 @@ export const invariants = {
 };
 ```
 
-A definition is content-hashed on load; a run is pinned to that hash, so editing
+A definition is content-hashed on load, and a run is pinned to that hash; editing
 `def.yaml` mid-run is rejected as a definition mismatch.
 
 > `def.yaml` also supports `itemSchemas`, `linkSchemas`, `interviews`, `artifactTemplates`,
-> and `recipes`. These are consumed by the workflow runner library; the standalone
-> `ix-flow` CLI drives **phase advancement and gate acknowledgement** only (`run`,
-> `advance`, `ack`, `status`, `history`). It does not record interview answers or run
-> recipes.
+> and `recipes`. These are consumed by the workflow runtime; the `ix-flow` CLI itself
+> drives **phase advancement and gate acknowledgement** (`run`, `advance`, `ack`, `status`,
+> `history`) — it does not record interview answers or run recipes.
+
+### 2. Create the skill that runs it
+
+`SKILL.md` is the agent's playbook. Its frontmatter points at the flow; its body tells the
+agent how to drive the run.
+
+```markdown
+---
+name: my-skill
+description: What this skill does.
+contributes:
+  workflows: ./workflows
+---
+
+# /my-skill
+
+Start from `ix-flow status` and follow the reported next actions. Advance through the
+flow's phases, recording progress as you go. Stop at human gates and resume after an `ack`.
+```
+
+An agent invokes the skill and runs the flow with the commands below.
 
 ## Commands
 
@@ -105,12 +126,12 @@ All commands accept `--json` and the global flags below.
 ix-flow run <flow> [--path <skill-dir>] [--id <id>] [--name <name>] [--target <ref>...]
 ```
 
-Creates a run. Provide `<flow>` to resolve a registered definition, or `--path` to load a
-skill directory (path mode). `--id` sets the run id (otherwise a UUID), `--name` labels the
-run, and each `--target` records a file reference the workflow operates on.
+Create a run. Pass `<flow>` to resolve a registered definition, or `--path` to load a skill
+directory. `--id` sets the run id (otherwise a UUID), `--name` labels the run, and each
+`--target` records a file the flow operates on.
 
 ```bash
-ix-flow run release --path examples/release --state-dir /tmp/flow
+ix-flow run release --path examples/release
 # create: ok
 # run: <run-id>
 # phase: draft
@@ -123,8 +144,8 @@ ix-flow status <run-id>
 ix-flow resume <run-id>
 ```
 
-Report the current phase, open gates, and next actions. `resume` adds a reminder to
-continue the run in your agent harness.
+Report the current phase, open gates, and next actions. `resume` is how an agent picks a
+run back up — for example in a new session — before continuing.
 
 ### advance
 
@@ -132,8 +153,8 @@ continue the run in your agent harness.
 ix-flow advance <run-id> <phase>
 ```
 
-Follow the transition into `<phase>`. If a required invariant fails, the run stays put and
-the command reports the failure. If the transition is a `hitl` gate, the run defers and
+Make the transition into `<phase>`. If a required invariant fails, the run stays put and
+the command reports the failure. If the transition is a `hitl` gate, the run pauses and
 prints the gate token:
 
 ```bash
@@ -143,18 +164,16 @@ ix-flow advance <run-id> approved
 # next: ix-flow ack <run-id> ack_… --reviewer <user>
 ```
 
-Acknowledge the gate with `ack`, then advance again.
-
 ### ack
 
 ```bash
 ix-flow ack <run-id> <token> [--reviewer <id>] [--kind <kind>] [--note <text>]
 ```
 
-Acknowledge a deferred gate, then re-run `advance` to complete the transition.
+Record human approval for a paused gate, then `advance` again to complete the transition.
 
 ```bash
-ix-flow ack <run-id> ack_… --reviewer me
+ix-flow ack <run-id> ack_… --reviewer alice
 ix-flow advance <run-id> approved
 # phase: approved
 ```
@@ -169,7 +188,7 @@ Print the run's event log (use `--json` for full event records with hashes).
 
 ## JSON output
 
-`--json` prints the full result envelope. Key fields:
+Agents add `--json` to consume the full result envelope. Key fields:
 
 ```jsonc
 {
@@ -186,17 +205,14 @@ Print the run's event log (use `--json` for full event records with hashes).
 }
 ```
 
-- `state` — outcome of the command; `gate_deferred` and `invariant_failed` mean the run
-  did not move.
+- `state` — outcome of the command; `gate_deferred` and `invariant_failed` mean the run did
+  not move.
 - `current_phase` — the run's phase after the command.
 - `open_gates[].token` — pass to `ack` to clear a `hitl` gate.
-- `next_actions` — suggested follow-up commands.
+- `next_actions` — suggested follow-up commands for the agent.
 
-## State on disk
+## State
 
-State lives under `~/.ix/flows` by default, one JSON file per run. Override per command:
-
-- `--state-dir <dir>` — store runs in `<dir>` (use a throwaway dir for experiments).
-- `--config-root <dir>` — relocate the whole `~/.ix` config root (state defaults to
-  `<config-root>/flows`).
-- `--no-project-config` — ignore a project-local `.ix` config.
+Each run is one JSON file under `~/.ix/flows`, persisting across agent sessions so a run can
+be resumed. To isolate a run (e.g. in tests), override the location with `--state-dir`, or
+relocate the whole `~/.ix` root with `--config-root`.
