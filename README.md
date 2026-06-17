@@ -6,21 +6,13 @@
 
 # IX Flow
 
-`ix-flow` is the Agent IX workflow lifecycle runner. An agent runs a workflow — defined as
-a small state machine of phases, transitions, and human gates — by calling `ix-flow` to
-track where the run is, advance it, and pause for human approval. Runs persist, so an agent
-can resume one across sessions.
+`ix-flow` runs agent workflows. A workflow is a small state machine — phases, transitions,
+and human gates — that your agent advances step by step, pausing for your approval where it
+matters. You **author** a workflow; your **agent runs it** by calling `ix-flow`.
 
-## The pattern: define a flow, then create a skill to run it
-
-1. **Define a flow** — a `def.yaml` describing phases, transitions, gates, and invariants.
-2. **Create a skill** — a `SKILL.md` that points at the flow and tells the agent how to
-   drive it (start from status, follow the next actions, record progress, stop at gates).
-3. **An agent runs it** — the agent invokes the skill and calls `ix-flow` to create a run
-   and advance it through the flow, pausing where a human gate requires approval.
-
-[`ix-spec`](https://github.com/agent-ix/ix-spec) is a real consumer: `ix-spec review`
-launches a spec-review flow and hands lifecycle control to `ix-flow`.
+Workflows are packaged as **skills**: a flow definition plus instructions that tell the
+agent how to run it. [`ix-spec`](https://github.com/agent-ix/ix-spec), for example, ships
+spec skills that drive `ix-flow` — you invoke the skill, and the agent does the rest.
 
 ## Install
 
@@ -28,59 +20,81 @@ launches a spec-review flow and hands lifecycle control to `ix-flow`.
 npm i -g @agent-ix/ix-flow
 ```
 
-## Quickstart
+Then make a workflow skill available to your agent (author your own below, or install one
+like `ix-spec` that ships its own).
 
-Run the bundled [`examples/release`](examples/release) flow — `draft → in_review →
-approved`, with a human gate on the final step. The agent drives the run with `ix-flow`:
+## Author a workflow
 
-```bash
-# Create a run from a workflow skill.
-ix-flow run release --path examples/release
-# create: ok
-# run: <run-id>
-# phase: draft
+A workflow is two files in a skill directory:
 
-# Advance through the flow's phases.
-ix-flow advance <run-id> in_review
-# phase: in_review
-
-# The final transition is a human gate; it pauses and reports the gate token.
-ix-flow advance <run-id> approved
-# advance: gate_deferred
-# gate: ack_... (to approved)
-# next: ix-flow ack <run-id> ack_... --reviewer <user>
-
-# A human approves; the run continues to the terminal phase.
-ix-flow ack <run-id> <token> --reviewer alice
-ix-flow advance <run-id> approved
-# phase: approved
+```
+release/
+  SKILL.md                      # instructs the agent how to run the flow
+  workflows/
+    release/
+      def.yaml                  # the flow: phases, transitions, gates
 ```
 
-Agents read machine output by adding `--json` to any command (see
-[`docs/usage.md`](docs/usage.md)).
+**The flow** (`def.yaml`) declares the states and the moves between them. Here a change goes
+`draft → in_review → approved`, with the final step gated on human approval:
 
-## Commands
+```yaml
+name: release
+version: 0.1.0
+initialPhase: draft
+phases:
+  - { name: draft }
+  - { name: in_review }
+  - { name: approved, terminal: true }
+transitions:
+  - { from: draft, to: in_review, defaultGate: auto }
+  - { from: in_review, to: approved, defaultGate: hitl } # pauses for approval
+```
 
-| Command                     | Purpose                                                    |
-| --------------------------- | ---------------------------------------------------------- |
-| `run <flow> [--path <dir>]` | Create a run from a registered definition or skill dir.    |
-| `status <run-id>`           | Show current phase, open gates, and next actions.          |
-| `resume <run-id>`           | Pick a run back up (e.g. in a new agent session).          |
-| `advance <run-id> <phase>`  | Move to the next phase (may pause on a gate or invariant). |
-| `ack <run-id> <token>`      | Record human approval for a paused gate.                   |
-| `history <run-id>`          | Show the run's event log.                                  |
+**The skill** (`SKILL.md`) tells the agent how to run that flow:
+
+```markdown
+---
+name: release
+description: Drive a change from draft through review to release.
+contributes:
+  workflows: ./workflows
+---
+
+# /release
+
+Start from the run status and follow the reported next actions. Advance the run through its
+phases, and stop at the human gate until the change is approved.
+```
+
+See [`docs/usage.md`](docs/usage.md) for the full authoring reference. A complete, runnable
+version of this workflow is in [`examples/release`](examples/release).
+
+## Use a workflow
+
+Invoke the skill through your agent. The agent drives the run — creating it, advancing
+through the phases, and pausing at gates for your approval:
+
+```text
+You:    run the release workflow on this change
+Agent:  ▸ created run, advanced draft → in_review → reached the approval gate
+        "Ready to release. Approve?"
+You:    approve
+Agent:  ▸ recorded approval, advanced to approved
+        "Released."
+```
+
+Under the hood the agent calls `ix-flow` to track the run and enforce the gate. Runs
+persist, so the agent can resume one across sessions.
 
 ## Concepts
 
 - **Flow** — a workflow definition: phases, transitions, gates, invariants (`def.yaml`).
+- **Skill** — the agent's instructions for running a flow (`SKILL.md`).
 - **Run** — one live instance of a flow, identified by a run id.
 - **Phase** — a named state; a run sits in exactly one phase at a time.
-- **Transition** — a declared `from → to` move the agent makes with `advance`.
-- **Gate** — a `hitl` transition pauses for human approval, recorded with `ack`.
+- **Gate** — a `hitl` transition that pauses for human approval.
 - **Invariant** — a predicate that must hold before a transition succeeds.
-- **State** — each run is an append-only, hash-chained event log under `~/.ix/flows`.
-
-See [`docs/usage.md`](docs/usage.md) to author your own flow and skill.
 
 ## Development
 

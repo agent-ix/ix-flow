@@ -2,28 +2,20 @@
 
 ## `release`
 
-A minimal, runnable workflow showing the pattern: a **flow** (`def.yaml`) plus the **skill**
-(`SKILL.md`) an agent follows to run it. The flow goes `draft → in_review → approved`; the
-first transition is automatic, the second is a human gate.
-
-Layout:
+A complete, runnable workflow: a **flow** (`def.yaml`) plus the **skill** (`SKILL.md`) the
+agent follows to run it. The flow goes `draft → in_review → approved`, with the final step
+gated on human approval.
 
 ```
 release/
-  SKILL.md                      # how the agent drives the flow
+  SKILL.md                      # how the agent runs the flow
   workflows/
     release/
       def.yaml                  # the flow definition
 ```
 
-An agent runs it with `ix-flow`:
-
-```bash
-ix-flow run release --path examples/release
-ix-flow advance <run-id> in_review
-ix-flow advance <run-id> approved          # pauses for human approval; prints the token
-ix-flow ack <run-id> <token> --reviewer alice
-ix-flow advance <run-id> approved          # phase: approved
-```
+Make the skill available to your agent, then ask it to run the workflow. The agent creates
+the run, advances it through the phases, and pauses at the gate for your approval before
+reaching `approved`.
 
 See [`../docs/usage.md`](../docs/usage.md) to author your own flow and skill.
