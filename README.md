@@ -10,8 +10,6 @@
 small state machines — phases, transitions, human-in-the-loop gates — with persisted,
 event-chained run state and resume/status/ack operations.
 
-It is not a general BPM or workflow automation engine.
-
 ## Install
 
 ```bash
