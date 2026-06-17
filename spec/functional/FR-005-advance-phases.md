@@ -43,4 +43,4 @@ further (any further `advance` fails with `transition_not_found`).
 
 ## Dependencies
 
-- **Upstream**: US-001 run a workflow
+- **Upstream**: [US-001](../usecase/US-001-run-a-workflow.md) run a workflow

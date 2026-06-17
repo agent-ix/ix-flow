@@ -44,4 +44,4 @@ published npm tarball.
 
 ## Dependencies
 
-- **Upstream**: US-006 publish a workflow set
+- **Upstream**: [US-006](../usecase/US-006-publish-a-workflow-set.md) publish a workflow set

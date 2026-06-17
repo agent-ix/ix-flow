@@ -18,7 +18,7 @@ command referencing an unknown run id SHALL fail with `instance_not_found`.
 ## Inputs
 
 - A run id
-- Global flags inherited from FR-002
+- Global flags inherited from [FR-002](./FR-002-runtime-context-and-flags.md)
 
 ## Outputs
 
@@ -34,4 +34,4 @@ command referencing an unknown run id SHALL fail with `instance_not_found`.
 
 ## Dependencies
 
-- **Upstream**: US-001 run a workflow
+- **Upstream**: [US-001](../usecase/US-001-run-a-workflow.md) run a workflow

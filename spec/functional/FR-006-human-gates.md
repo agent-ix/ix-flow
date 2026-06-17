@@ -47,4 +47,4 @@ and the next actions, and the command SHALL exit with status 0.
 
 ## Dependencies
 
-- **Upstream**: US-002 approve a human gate
+- **Upstream**: [US-002](../usecase/US-002-approve-a-human-gate.md) approve a human gate

@@ -33,4 +33,4 @@ separate processes, and reading an unknown id SHALL fail with
 
 ## Dependencies
 
-- **Upstream**: US-003 persist workflow runs locally
+- **Upstream**: [US-003](../usecase/US-003-resume-across-sessions.md) persist workflow runs locally

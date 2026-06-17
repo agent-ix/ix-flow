@@ -45,4 +45,4 @@ the next valid commands. On failure, the envelope SHALL carry a structured
 
 ## Dependencies
 
-- **Upstream**: StR-004 agent-consumable output
+- **Upstream**: [StR-004](../stakeholder/StR-004-shared-cli-contract.md) agent-consumable output

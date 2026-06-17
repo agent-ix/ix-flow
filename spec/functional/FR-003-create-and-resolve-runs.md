@@ -27,8 +27,8 @@ When a referenced definition name is unknown the command SHALL fail with
 `definition_not_found`. When a definition's `contentHash` no longer matches
 the pinned `defHash` on a later command, that command SHALL fail with
 `definition_hash_mismatch`. In path-mode, skill-loading failures surface the
-errors defined in FR-016 (`skill_not_found`, `skill_format_invalid`,
-`workflow_ambiguous`) and definition-format errors from FR-014
+errors defined in [FR-016](./FR-016-skill-on-disk-format.md) (`skill_not_found`, `skill_format_invalid`,
+`workflow_ambiguous`) and definition-format errors from [FR-014](./FR-014-workflow-definition-format.md)
 (`definition_schema_invalid`, `definition_yaml_parse_failed`).
 
 ## Inputs
@@ -53,4 +53,4 @@ errors defined in FR-016 (`skill_not_found`, `skill_format_invalid`,
 
 ## Dependencies
 
-- **Upstream**: US-001 run a workflow, US-005 author a workflow as a skill
+- **Upstream**: [US-001](../usecase/US-001-run-a-workflow.md) run a workflow, [US-005](../usecase/US-005-author-a-workflow-as-a-skill.md) author a workflow as a skill

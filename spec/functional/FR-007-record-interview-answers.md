@@ -46,4 +46,4 @@ transition SHALL surface as `interview_followups`.
 
 ## Dependencies
 
-- **Upstream**: US-008 author structured interviews
+- **Upstream**: [US-008](../usecase/US-008-author-structured-interviews.md) author structured interviews

@@ -44,4 +44,4 @@ emitted as a JSON envelope; otherwise output SHALL be human-readable.
 
 ## Dependencies
 
-- **Upstream**: StR-004 shared CLI contract
+- **Upstream**: [StR-004](../stakeholder/StR-004-shared-cli-contract.md) shared CLI contract

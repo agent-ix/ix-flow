@@ -36,4 +36,4 @@ Applies to local (path-mode) workflow runs and their persisted state.
 
 ## Dependencies
 
-- Constrains FR-012 local instance store
+- Constrains [FR-012](../functional/FR-012-local-instance-store.md) local instance store

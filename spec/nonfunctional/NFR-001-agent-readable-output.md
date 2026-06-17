@@ -37,4 +37,4 @@ hashing.
 
 ## Dependencies
 
-- Constrains FR-011 structured result envelope
+- Constrains [FR-011](../functional/FR-011-result-envelope.md) structured result envelope

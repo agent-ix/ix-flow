@@ -44,4 +44,4 @@ SHALL fail with `definition_yaml_parse_failed`.
 
 ## Dependencies
 
-- **Upstream**: US-005 author a workflow as a skill
+- **Upstream**: [US-005](../usecase/US-005-author-a-workflow-as-a-skill.md) author a workflow as a skill

@@ -19,7 +19,7 @@ chain hashes. A `history` command referencing an unknown run id SHALL fail with
 ## Inputs
 
 - A run id
-- Global flags inherited from FR-002
+- Global flags inherited from [FR-002](./FR-002-runtime-context-and-flags.md)
 
 ## Outputs
 
@@ -35,4 +35,4 @@ chain hashes. A `history` command referencing an unknown run id SHALL fail with
 
 ## Dependencies
 
-- **Upstream**: US-004 audit and verify a run
+- **Upstream**: [US-004](../usecase/US-004-audit-and-verify-a-run.md) audit and verify a run

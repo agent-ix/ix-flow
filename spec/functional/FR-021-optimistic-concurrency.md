@@ -33,4 +33,4 @@ Creating a run on an already existing id SHALL likewise fail with
 
 ## Dependencies
 
-- **Upstream**: StR-003 local-first workflow state
+- **Upstream**: [StR-003](../stakeholder/StR-003-local-first-state.md) local-first workflow state

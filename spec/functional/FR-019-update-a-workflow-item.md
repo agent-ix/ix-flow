@@ -34,4 +34,4 @@ item id that does not exist SHALL fail with `item_not_found`.
 
 ## Dependencies
 
-- **Upstream**: US-001 run a workflow
+- **Upstream**: [US-001](../usecase/US-001-run-a-workflow.md) run a workflow

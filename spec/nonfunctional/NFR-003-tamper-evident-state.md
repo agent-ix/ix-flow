@@ -36,4 +36,4 @@ Applies to the per-run event log and the `verify` integrity check.
 
 ## Dependencies
 
-- Constrains FR-013 event log and integrity
+- Constrains [FR-013](../functional/FR-013-event-log-and-integrity.md) event log and integrity

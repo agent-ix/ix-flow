@@ -46,4 +46,4 @@ otherwise unknown step SHALL be rejected at parse time with
 
 ## Dependencies
 
-- **Upstream**: US-009 run command recipes
+- **Upstream**: [US-009](../usecase/US-009-run-command-recipes.md) run command recipes

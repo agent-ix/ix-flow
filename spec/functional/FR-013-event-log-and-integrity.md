@@ -37,4 +37,4 @@ deterministic.
 
 ## Dependencies
 
-- **Upstream**: US-004 audit a workflow run
+- **Upstream**: [US-004](../usecase/US-004-audit-and-verify-a-run.md) audit a workflow run

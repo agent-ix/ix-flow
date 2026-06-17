@@ -19,7 +19,7 @@ A `resume` command referencing an unknown run id SHALL fail with
 ## Inputs
 
 - A run id
-- Global flags inherited from FR-002
+- Global flags inherited from [FR-002](./FR-002-runtime-context-and-flags.md)
 
 ## Outputs
 
@@ -35,4 +35,4 @@ A `resume` command referencing an unknown run id SHALL fail with
 
 ## Dependencies
 
-- **Upstream**: US-003 resume across sessions
+- **Upstream**: [US-003](../usecase/US-003-resume-across-sessions.md) resume across sessions

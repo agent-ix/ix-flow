@@ -42,4 +42,4 @@ as well as variable scope and unresolved-variable errors.
 
 ## Dependencies
 
-- **Upstream**: US-007 render workflow artifacts
+- **Upstream**: [US-007](../usecase/US-007-author-template-driven-artifacts.md) render workflow artifacts

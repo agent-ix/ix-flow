@@ -39,4 +39,4 @@ Applies to the overall ix-flow command surface.
 
 ## Dependencies
 
-- Constrains FR-003 create and resolve workflow runs
+- Constrains [FR-003](../functional/FR-003-create-and-resolve-runs.md) create and resolve workflow runs

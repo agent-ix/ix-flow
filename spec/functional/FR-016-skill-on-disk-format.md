@@ -40,4 +40,4 @@ workflow name; a multi-workflow skill referenced without a name SHALL fail with
 
 ## Dependencies
 
-- **Upstream**: StR-002 author workflows as skills, US-005 author a workflow as a skill
+- **Upstream**: [StR-002](../stakeholder/StR-002-agent-readable-workflows.md) author workflows as skills, [US-005](../usecase/US-005-author-a-workflow-as-a-skill.md) author a workflow as a skill
