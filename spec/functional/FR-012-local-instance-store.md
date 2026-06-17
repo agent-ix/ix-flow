@@ -1,13 +1,13 @@
 ---
 id: FR-012
-title: "Local instance store and concurrency"
+title: "Local instance store"
 type: FR
 relationships:
   - target: "ix://agent-ix/ix-flow/US-003"
     type: "implements"
 ---
 
-# [FR-012] Local instance store and concurrency
+# [FR-012] Local instance store
 
 ## Description
 
@@ -15,13 +15,8 @@ The `JsonFileInstanceStore` SHALL persist one JSON file per run under a
 configurable state directory, defaulting to `~/.ix/flows`, alongside an
 `index.json`. Writes SHALL be atomic, performed by writing a temporary file and
 renaming it into place with mode `0600`. A run SHALL be retrievable across
-separate processes.
-
-The store SHALL enforce optimistic concurrency: `appendAndSave` SHALL check the
-caller's `expectedVersion` against the persisted `stateVersion` and SHALL reject
-a stale write with `state_version_mismatch`. Creating a run on an already
-existing id SHALL also fail with `state_version_mismatch`, and reading an
-unknown id SHALL fail with `instance_not_found`.
+separate processes, and reading an unknown id SHALL fail with
+`instance_not_found`.
 
 ## Outputs
 
@@ -33,8 +28,8 @@ unknown id SHALL fail with `instance_not_found`.
 | ----------- | ----------------------------------------------------------- | ----------------------------- |
 | FR-012-AC-1 | A run persists and is retrievable across separate processes | Test (tests/commands.test.ts) |
 | FR-012-AC-2 | The default state directory is `~/.ix/flows`                | Inspection                    |
-| FR-012-AC-3 | A stale write is rejected with `state_version_mismatch`     | Analysis                      |
-| FR-012-AC-4 | Writes are atomic via temp file then rename                 | Inspection                    |
+| FR-012-AC-3 | Writes are atomic via temp file then rename                 | Inspection                    |
+| FR-012-AC-4 | Reading an unknown id fails with `instance_not_found`       | Analysis                      |
 
 ## Dependencies
 

@@ -34,6 +34,35 @@ async function runIntake(stateDir: string, cap: { lines: string[] }) {
   return runLine?.slice("run: ".length) as string;
 }
 
+test("status, resume, and history report a run", async () => {
+  const stateDir = mkdtempSync(join(tmpdir(), "ixflow-inspect-"));
+  const priorExitCode = process.exitCode;
+  const cap = captureLog();
+  try {
+    const id = await runIntake(stateDir, cap);
+
+    cap.lines.length = 0;
+    await main(["status", id, "--state-dir", stateDir]);
+    expect(cap.lines.join("\n")).toContain("phase: collecting");
+
+    cap.lines.length = 0;
+    await main(["resume", id, "--state-dir", stateDir]);
+    const resumeOut = cap.lines.join("\n");
+    expect(resumeOut).toContain("phase: collecting");
+    expect(resumeOut).toContain("Resume this run");
+
+    cap.lines.length = 0;
+    await main(["history", id, "--state-dir", stateDir, "--json"]);
+    const envelope = JSON.parse(cap.lines.join("\n"));
+    expect(Array.isArray(envelope.data)).toBe(true);
+    expect(envelope.data.length).toBeGreaterThan(0);
+  } finally {
+    cap.restore();
+    process.exitCode = priorExitCode;
+    rmSync(stateDir, { recursive: true, force: true });
+  }
+});
+
 test("record-answers lets an interview-gated transition pass, then a recipe finishes", async () => {
   const stateDir = mkdtempSync(join(tmpdir(), "ixflow-cmd-"));
   const priorExitCode = process.exitCode;

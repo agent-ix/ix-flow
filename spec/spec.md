@@ -71,19 +71,24 @@ and is covered in `matrix.md`.
 | FR-001  | CLI and Claude Code plugin packaging       | Inspection   |
 | FR-002  | Runtime context and global flags           | Test         |
 | FR-003  | Create and resolve workflow runs           | Test         |
-| FR-004  | Inspect workflow runs                      | Test         |
+| FR-004  | Report run status                          | Test         |
 | FR-005  | Advance phases                             | Test         |
 | FR-006  | Human approval gates                       | Test         |
 | FR-007  | Record interview answers                   | Test         |
 | FR-008  | Run command recipes                        | Test         |
-| FR-009  | Workflow data items                        | Test         |
-| FR-010  | Artifact templates                         | Analysis     |
+| FR-009  | Add a workflow item                        | Test         |
+| FR-010  | Artifact templates                         | Test         |
 | FR-011  | Structured result envelope                 | Test         |
-| FR-012  | Local instance store and concurrency       | Test         |
+| FR-012  | Local instance store                       | Test         |
 | FR-013  | Event log and integrity                    | Test         |
 | FR-014  | Workflow definition format                 | Test         |
 | FR-015  | Invariant resolution and custom invariants | Test         |
 | FR-016  | Skill on-disk format                       | Test         |
+| FR-017  | Resume a run                               | Test         |
+| FR-018  | Query run history                          | Test         |
+| FR-019  | Update a workflow item                     | Test         |
+| FR-020  | Link workflow items                        | Test         |
+| FR-021  | Optimistic concurrency control             | Analysis     |
 | NFR-001 | Agent-readable, deterministic output       | Test         |
 | NFR-002 | Local-first operation                      | Inspection   |
 | NFR-003 | Auditable, tamper-evident state            | Analysis     |
