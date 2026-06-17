@@ -107,6 +107,9 @@ persist, so the agent can resume one across sessions.
 - **Gate** — a `hitl` transition that pauses for human approval.
 - **Invariant** — a predicate that must hold before a transition succeeds.
 
+See [`docs/guide.md`](docs/guide.md) for the full guide — gates, invariants, interviews,
+artifact templates, the run lifecycle, and the complete command reference.
+
 ## Development
 
 ```bash
@@ -117,3 +120,7 @@ pnpm run lint
 ```
 
 This package builds on `@agent-ix/ix-cli-core` from the standalone `ix-cli-core` repo.
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
