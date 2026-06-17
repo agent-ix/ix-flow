@@ -33,12 +33,12 @@ as well as variable scope and unresolved-variable errors.
 
 ## Acceptance Criteria
 
-| ID          | Criteria                                                                      | Verification |
-| ----------- | ----------------------------------------------------------------------------- | ------------ |
-| FR-010-AC-1 | Entering the declared phase writes the target and appends an `ArtifactRecord` | Analysis     |
-| FR-010-AC-2 | Variables resolve from run state by pure substitution with no code execution  | Inspection   |
-| FR-010-AC-3 | Re-render is idempotent when the `contentHash` is unchanged                   | Analysis     |
-| FR-010-AC-4 | Targets must resolve within the project dir and templates require path-mode   | Analysis     |
+| ID          | Criteria                                                                      | Verification                         |
+| ----------- | ----------------------------------------------------------------------------- | ------------------------------------ |
+| FR-010-AC-1 | Entering the declared phase writes the target and appends an `ArtifactRecord` | Test (tests/engine-features.test.ts) |
+| FR-010-AC-2 | Variables resolve from run state by pure substitution with no code execution  | Test (tests/engine-features.test.ts) |
+| FR-010-AC-3 | Re-render is idempotent when the `contentHash` is unchanged                   | Analysis                             |
+| FR-010-AC-4 | Targets must resolve within the project dir and templates require path-mode   | Analysis                             |
 
 ## Dependencies
 

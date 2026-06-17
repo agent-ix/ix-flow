@@ -36,13 +36,13 @@ transition SHALL surface as `interview_followups`.
 
 ## Acceptance Criteria
 
-| ID          | Criteria                                                                    | Verification                  |
-| ----------- | --------------------------------------------------------------------------- | ----------------------------- |
-| FR-007-AC-1 | After `record-answers`, an `interview.complete`-gated advance passes        | Test (tests/commands.test.ts) |
-| FR-007-AC-2 | Advancing before required answers exist is blocked, naming the missing keys | Test (tests/commands.test.ts) |
-| FR-007-AC-3 | An invalid enum value or type is rejected at record time                    | Analysis                      |
-| FR-007-AC-4 | Malformed answer JSON produces a usage error                                | Test (tests/commands.test.ts) |
-| FR-007-AC-5 | Satisfied `followUpIf` questions surface as `interview_followups`           | Analysis                      |
+| ID          | Criteria                                                                    | Verification                         |
+| ----------- | --------------------------------------------------------------------------- | ------------------------------------ |
+| FR-007-AC-1 | After `record-answers`, an `interview.complete`-gated advance passes        | Test (tests/commands.test.ts)        |
+| FR-007-AC-2 | Advancing before required answers exist is blocked, naming the missing keys | Test (tests/commands.test.ts)        |
+| FR-007-AC-3 | An invalid enum value or type is rejected at record time                    | Analysis                             |
+| FR-007-AC-4 | Malformed answer JSON produces a usage error                                | Test (tests/commands.test.ts)        |
+| FR-007-AC-5 | Matched `followUpIf` questions surface as `interview_followups`             | Test (tests/engine-features.test.ts) |
 
 ## Dependencies
 

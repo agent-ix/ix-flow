@@ -25,12 +25,12 @@ Referencing an unregistered invariant SHALL fail with
 
 ## Acceptance Criteria
 
-| ID          | Criteria                                                                 | Verification                 |
-| ----------- | ------------------------------------------------------------------------ | ---------------------------- |
-| FR-015-AC-1 | Built-in invariants are available without a skill script                 | Test (tests/scripts.test.ts) |
-| FR-015-AC-2 | A custom invariant is resolved from `scripts/invariants.js`              | Analysis                     |
-| FR-015-AC-3 | An unregistered invariant fails with `transition_invariant_unregistered` | Analysis                     |
-| FR-015-AC-4 | A failing invariant returns a structured `code`/`details`                | Test (tests/scripts.test.ts) |
+| ID          | Criteria                                                                 | Verification                         |
+| ----------- | ------------------------------------------------------------------------ | ------------------------------------ |
+| FR-015-AC-1 | Built-in invariants are available without a skill script                 | Test (tests/commands.test.ts)        |
+| FR-015-AC-2 | A custom invariant is resolved from `scripts/invariants.js`              | Test (tests/engine-features.test.ts) |
+| FR-015-AC-3 | An unregistered invariant fails with `transition_invariant_unregistered` | Test (tests/engine-features.test.ts) |
+| FR-015-AC-4 | A failing invariant returns a structured `code`/`details`                | Test (tests/engine-features.test.ts) |
 
 ## Dependencies
 
