@@ -19,6 +19,11 @@ Every command SHALL return a structured result envelope carrying the fields
 
 The envelope `state` SHALL be one of `ok`, `gate_deferred`,
 `invariant_failed`, `concurrency_conflict`, `definition_mismatch`, or `error`.
+The `state` is the coarse outcome; the underlying error `code` maps onto it —
+`transition_invariant_failed` → `invariant_failed`, `state_version_mismatch` →
+`concurrency_conflict`, `definition_hash_mismatch` → `definition_mismatch`, and
+any other failure → `error`. The envelope MAY also carry read-side fields
+(`transitions_available`, `cli_version`) in addition to those listed above.
 Output SHALL default to a human-readable form, and the full JSON envelope SHALL
 be emitted under `--json`. `next_actions` SHALL guide the calling agent toward
 the next valid commands. On failure, the envelope SHALL carry a structured

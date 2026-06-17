@@ -26,7 +26,10 @@ pinned by content hash (`defHash`, the SHA-256 of its canonical JSON).
 When a referenced definition name is unknown the command SHALL fail with
 `definition_not_found`. When a definition's `contentHash` no longer matches
 the pinned `defHash` on a later command, that command SHALL fail with
-`definition_hash_mismatch`.
+`definition_hash_mismatch`. In path-mode, skill-loading failures surface the
+errors defined in FR-016 (`skill_not_found`, `skill_format_invalid`,
+`workflow_ambiguous`) and definition-format errors from FR-014
+(`definition_schema_invalid`, `definition_yaml_parse_failed`).
 
 ## Inputs
 

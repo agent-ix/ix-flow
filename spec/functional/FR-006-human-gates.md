@@ -11,7 +11,11 @@ relationships:
 
 ## Description
 
-A transition whose gate mode is `hitl` SHALL defer when advanced into,
+A transition's gate mode governs whether advancing it pauses for approval.
+Only `hitl` changes behavior: a transition whose gate mode is `auto` (the
+default) commits immediately, while `full-auto` is accepted by the schema but
+currently behaves identically to `auto` (reserved for future use). A
+transition whose gate mode is `hitl` SHALL defer when advanced into,
 returning the state `gate_deferred` with an open gate carrying a `token`.
 The `ack <run-id> <token>` command SHALL record approval for that gate and
 SHALL accept the options `--reviewer`, `--kind`, and `--note`. An `ack`

@@ -20,8 +20,8 @@ separate processes.
 The store SHALL enforce optimistic concurrency: `appendAndSave` SHALL check the
 caller's `expectedVersion` against the persisted `stateVersion` and SHALL reject
 a stale write with `state_version_mismatch`. Creating a run on an already
-existing id SHALL likewise conflict, and reading an unknown id SHALL fail with
-`instance_not_found`.
+existing id SHALL also fail with `state_version_mismatch`, and reading an
+unknown id SHALL fail with `instance_not_found`.
 
 ## Outputs
 

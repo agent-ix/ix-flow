@@ -16,8 +16,11 @@ with the fields `name`, `version`, optional `description`, `initialPhase`,
 `phases` (`name`, optional `terminal`, optional `hint`), `transitions`
 (`from`, `to`, `invariants`, `defaultGate` ∈ {`auto`, `hitl`, `full-auto`}),
 `itemSchemas`, `linkSchemas`, optional `interviews`, optional
-`artifactTemplates`, and optional `recipes`. `parseWorkflowDef` SHALL validate
-it (via zod) and SHALL pin a `contentHash` (SHA-256 of its canonical JSON).
+`artifactTemplates`, and optional `recipes`. The `defaultGate` enum accepts
+`auto`, `hitl`, and `full-auto`, though only `auto` and `hitl` currently drive
+distinct runtime behavior (`full-auto` is reserved and behaves as `auto`).
+`parseWorkflowDef` SHALL validate it (via zod) and SHALL pin a `contentHash`
+(SHA-256 of its canonical JSON).
 
 Referential checks SHALL require that `initialPhase` and every transition
 `from`/`to` are declared phases, that each interview `itemType` is a key in
