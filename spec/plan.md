@@ -1,5 +1,5 @@
 ---
-id: Plan-001
+id: PL-001
 title: ix-flow Implementation Plan
 type: Plan
 ---
