@@ -1,0 +1,15 @@
+name: release
+version: 0.1.0
+description: Drive a change from draft through review to release.
+initialPhase: draft
+phases:
+  - { name: draft }
+  - { name: in_review }
+  - { name: approved, terminal: true }
+transitions:
+  - from: draft
+    to: in_review
+    defaultGate: auto
+  - from: in_review
+    to: approved
+    defaultGate: hitl
