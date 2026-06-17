@@ -16,12 +16,22 @@ spec skills that drive `ix-flow` — you invoke the skill, and the agent does th
 
 ## Install
 
+Install the CLI your agent calls:
+
 ```bash
 npm i -g @agent-ix/ix-flow
 ```
 
-Then make a workflow skill available to your agent (author your own below, or install one
-like `ix-spec` that ships its own).
+Then install the Claude Code plugin, which adds the `/ix-flow` and `/ix-flow-create`
+commands:
+
+```text
+/plugin marketplace add agent-ix/ix-flow
+/plugin install ix-flow@ix-flow
+```
+
+The plugin ships two skills: **ix-flow** runs a workflow, and **ix-flow-create** authors a
+new one. Author your own workflow below, or install one like `ix-spec` that ships its own.
 
 ## Author a workflow
 
@@ -67,16 +77,17 @@ Start from the run status and follow the reported next actions. Advance the run 
 phases, and stop at the human gate until the change is approved.
 ```
 
-See [`docs/usage.md`](docs/usage.md) for the full authoring reference. A complete, runnable
+Run `/ix-flow-create` and your agent scaffolds both files for you. See
+[`docs/usage.md`](docs/usage.md) for the full authoring reference; a complete, runnable
 version of this workflow is in [`examples/release`](examples/release).
 
 ## Use a workflow
 
-Invoke the skill through your agent. The agent drives the run — creating it, advancing
-through the phases, and pausing at gates for your approval:
+Run `/ix-flow <workflow>` and your agent drives the run — creating it, advancing through the
+phases, and pausing at gates for your approval:
 
 ```text
-You:    run the release workflow on this change
+You:    /ix-flow release
 Agent:  ▸ created run, advanced draft → in_review → reached the approval gate
         "Ready to release. Approve?"
 You:    approve

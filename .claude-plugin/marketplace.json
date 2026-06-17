@@ -1,0 +1,13 @@
+{
+  "name": "ix-flow",
+  "owner": {
+    "name": "Agent IX"
+  },
+  "plugins": [
+    {
+      "name": "ix-flow",
+      "source": "./",
+      "description": "Run and author Agent IX workflows from Claude."
+    }
+  ]
+}
