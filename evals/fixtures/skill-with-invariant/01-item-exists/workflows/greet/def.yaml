@@ -1,0 +1,17 @@
+name: greet
+version: 0.1.0
+description: Advance only after at least one greeting item is recorded.
+initialPhase: greeted
+phases:
+  - { name: greeted }
+  - { name: done, terminal: true }
+transitions:
+  - from: greeted
+    to: done
+    invariants: [greeting.exists]
+    defaultGate: auto
+itemSchemas:
+  greeting:
+    id: Greeting@1
+    required: [id, message]
+linkSchemas: {}

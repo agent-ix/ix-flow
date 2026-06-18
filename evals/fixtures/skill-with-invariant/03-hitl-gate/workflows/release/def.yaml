@@ -1,0 +1,14 @@
+name: release
+version: 0.1.0
+description: Release advances to `published` only after a first-class HITL gate is acknowledged.
+initialPhase: staged
+phases:
+  - { name: staged }
+  - { name: published, terminal: true }
+transitions:
+  - from: staged
+    to: published
+    invariants: []
+    defaultGate: hitl
+itemSchemas: {}
+linkSchemas: {}

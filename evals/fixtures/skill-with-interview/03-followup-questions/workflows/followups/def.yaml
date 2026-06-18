@@ -1,0 +1,36 @@
+name: followup-questions
+version: 0.1.0
+description: followUpIf re-surfaces a question downstream.
+initialPhase: discovery
+phases:
+  - { name: discovery }
+  - { name: planned }
+  - { name: done, terminal: true }
+transitions:
+  - from: discovery
+    to: planned
+    invariants:
+      - "interview.complete:discovery"
+    defaultGate: auto
+  - from: planned
+    to: done
+    invariants:
+      - "interview.complete:discovery"
+    defaultGate: auto
+itemSchemas:
+  discovery_answers: {}
+linkSchemas: {}
+interviews:
+  discovery:
+    itemType: discovery_answers
+    completenessRule: all_required
+    questions:
+      - key: problem_statement
+        prompt: "Statement of the problem."
+        type: text
+        required: true
+      - key: open_questions
+        prompt: "Anything you're unsure about?"
+        type: "list<text>"
+        required: false
+        followUpIf: nonEmpty

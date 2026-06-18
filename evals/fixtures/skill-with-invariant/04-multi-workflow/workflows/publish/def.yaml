@@ -1,0 +1,17 @@
+name: publish
+version: 0.1.0
+description: Set a target, then publish.
+initialPhase: drafted
+phases:
+  - { name: drafted }
+  - { name: published, terminal: true }
+transitions:
+  - from: drafted
+    to: published
+    invariants: [publish.has_target]
+    defaultGate: auto
+itemSchemas:
+  target:
+    id: Target@1
+    required: [id, url]
+linkSchemas: {}

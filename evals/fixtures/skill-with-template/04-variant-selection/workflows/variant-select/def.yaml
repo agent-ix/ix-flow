@@ -1,0 +1,21 @@
+name: variant-select
+version: 0.1.0
+description: Variant template selection from a persisted item field.
+initialPhase: drafting
+phases:
+  - { name: drafting }
+  - { name: rendered, terminal: true }
+transitions:
+  - from: drafting
+    to: rendered
+    invariants: []
+    defaultGate: auto
+itemSchemas:
+  component: {}
+linkSchemas: {}
+artifactTemplates:
+  spec:
+    source: templates/default/spec.md
+    variant: templates/${items.component.c1.component_type}
+    target: out/spec-${instance.id}.md
+    phase: rendered

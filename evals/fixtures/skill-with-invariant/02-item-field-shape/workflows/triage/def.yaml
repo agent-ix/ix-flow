@@ -1,0 +1,22 @@
+name: triage
+version: 0.1.0
+description: Every report must have a non-empty `summary` before triage closes.
+initialPhase: collecting
+phases:
+  - { name: collecting }
+  - { name: summarized }
+  - { name: closed, terminal: true }
+transitions:
+  - from: collecting
+    to: summarized
+    invariants: [report.summary_filled]
+    defaultGate: auto
+  - from: summarized
+    to: closed
+    invariants: []
+    defaultGate: auto
+itemSchemas:
+  report:
+    id: Report@1
+    required: [id, title]
+linkSchemas: {}

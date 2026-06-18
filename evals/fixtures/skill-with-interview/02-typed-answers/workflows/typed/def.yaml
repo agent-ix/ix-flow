@@ -1,0 +1,47 @@
+name: typed-answers
+version: 0.1.0
+description: Question bank exercising every supported type.
+initialPhase: discovery
+phases:
+  - { name: discovery }
+  - { name: drafting, terminal: true }
+transitions:
+  - from: discovery
+    to: drafting
+    invariants:
+      - "interview.complete:discovery"
+    defaultGate: auto
+itemSchemas:
+  discovery_answers: {}
+linkSchemas: {}
+interviews:
+  discovery:
+    itemType: discovery_answers
+    completenessRule: all_required
+    questions:
+      - key: problem_statement
+        prompt: "Statement of the problem."
+        type: text
+        required: true
+      - key: personas
+        prompt: "Personas affected."
+        type: "list<text>"
+        required: true
+        minItems: 1
+      - key: size
+        prompt: "Feature complexity."
+        type: enum
+        options:
+          - trivial
+          - simple
+          - complex
+          - platform-critical
+        required: true
+      - key: needs_migration
+        prompt: "Does the feature require a data migration?"
+        type: bool
+        required: false
+      - key: target_count
+        prompt: "Target user count."
+        type: int
+        required: false

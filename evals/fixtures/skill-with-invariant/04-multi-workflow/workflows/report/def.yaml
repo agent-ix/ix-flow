@@ -1,0 +1,17 @@
+name: report
+version: 0.1.0
+description: Collect findings, then close the report.
+initialPhase: collecting
+phases:
+  - { name: collecting }
+  - { name: closed, terminal: true }
+transitions:
+  - from: collecting
+    to: closed
+    invariants: [report.has_findings]
+    defaultGate: auto
+itemSchemas:
+  finding:
+    id: Finding@1
+    required: [id, text]
+linkSchemas: {}

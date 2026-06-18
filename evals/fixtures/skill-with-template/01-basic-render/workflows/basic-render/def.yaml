@@ -1,0 +1,19 @@
+name: basic-render
+version: 0.1.0
+description: One phase-entry template render. No invariants.
+initialPhase: drafting
+phases:
+  - { name: drafting }
+  - { name: rendered, terminal: true }
+transitions:
+  - from: drafting
+    to: rendered
+    invariants: []
+    defaultGate: auto
+itemSchemas: {}
+linkSchemas: {}
+artifactTemplates:
+  notes:
+    source: templates/notes.md
+    target: out/notes-${instance.id}.md
+    phase: rendered

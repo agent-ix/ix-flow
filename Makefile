@@ -39,6 +39,35 @@ clean:
 	pnpm run clean
 
 # =============================================================================
+# Agent-pty evals (drive the REAL claude agent; cost tokens + minutes — opt-in).
+# Prereqs: tmux + claude on PATH, a built ../agent-pty, and a built ix-flow.
+# =============================================================================
+# Usage:
+#   make evals                     # canary subset (one per family)
+#   make evals MODEL=opus REPEATS=2
+#   make evals-all                 # full corpus
+#   make eval FILTER=EV-013        # a single scenario (keeps workdirs)
+
+MODEL ?= sonnet
+REPEATS ?= 1
+
+.PHONY: evals
+evals:
+	node evals/run.mjs --canary --model $(MODEL) --repeats $(REPEATS)
+
+.PHONY: evals-all
+evals-all:
+	node evals/run.mjs --all --model $(MODEL) --repeats $(REPEATS)
+
+.PHONY: eval
+eval:
+	node evals/run.mjs --filter $(FILTER) --model $(MODEL) --repeats $(REPEATS) --keep
+
+.PHONY: evals-rebuild
+evals-rebuild:
+	node evals/run.mjs --rebuild
+
+# =============================================================================
 # Package Management
 # =============================================================================
 

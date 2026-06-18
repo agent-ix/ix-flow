@@ -1,0 +1,14 @@
+name: helloworld
+version: 0.1.0
+description: Two phases, one auto transition, no invariants. Bare minimum.
+initialPhase: start
+phases:
+  - { name: start }
+  - { name: done, terminal: true }
+transitions:
+  - from: start
+    to: done
+    invariants: []
+    defaultGate: auto
+itemSchemas: {}
+linkSchemas: {}

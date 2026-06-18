@@ -121,6 +121,17 @@ pnpm run lint
 
 This package builds on `@agent-ix/ix-cli-core` from the standalone `ix-cli-core` repo.
 
+### Evals
+
+Beyond the unit tests, [`evals/`](evals/README.md) drives the **real `claude` agent** (via
+agent-pty + tmux) through each workflow skill end-to-end and profiles the run. They cost
+tokens and minutes, so they are opt-in:
+
+```bash
+make evals          # canary subset (one scenario per family)
+make evals-all      # full corpus (EV-001..EV-022)
+```
+
 ## License
 
 MIT — see [`LICENSE`](LICENSE).

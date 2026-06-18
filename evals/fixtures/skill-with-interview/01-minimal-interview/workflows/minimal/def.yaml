@@ -1,0 +1,25 @@
+name: minimal-interview
+version: 0.1.0
+description: One question, completeness-gated transition.
+initialPhase: discovery
+phases:
+  - { name: discovery }
+  - { name: drafting, terminal: true }
+transitions:
+  - from: discovery
+    to: drafting
+    invariants:
+      - "interview.complete:discovery"
+    defaultGate: auto
+itemSchemas:
+  discovery_answers: {}
+linkSchemas: {}
+interviews:
+  discovery:
+    itemType: discovery_answers
+    completenessRule: all_required
+    questions:
+      - key: problem_statement
+        prompt: "What problem does this feature solve and who has it?"
+        type: text
+        required: true

@@ -1,0 +1,20 @@
+name: build-graph
+version: 0.1.0
+description: Add nodes and links; the terminal advance requires an acyclic graph.
+initialPhase: building
+phases:
+  - { name: building }
+  - { name: validated, terminal: true }
+transitions:
+  - from: building
+    to: validated
+    invariants: [acyclic]
+    defaultGate: auto
+itemSchemas:
+  node:
+    id: Node@1
+    required: [id, label]
+linkSchemas:
+  depends:
+    from: node
+    to: node

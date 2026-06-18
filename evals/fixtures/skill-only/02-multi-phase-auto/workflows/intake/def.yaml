@@ -1,0 +1,22 @@
+name: intake
+version: 0.1.0
+description: Three-phase auto flow recording note items.
+initialPhase: drafted
+phases:
+  - { name: drafted }
+  - { name: reviewing }
+  - { name: filed, terminal: true }
+transitions:
+  - from: drafted
+    to: reviewing
+    invariants: []
+    defaultGate: auto
+  - from: reviewing
+    to: filed
+    invariants: []
+    defaultGate: auto
+itemSchemas:
+  note:
+    id: Note@1
+    required: [id, body]
+linkSchemas: {}

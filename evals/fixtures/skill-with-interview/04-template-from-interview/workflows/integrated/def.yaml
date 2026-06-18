@@ -1,0 +1,34 @@
+name: template-from-interview
+version: 0.1.0
+description: Interview answers drive a rendered template artifact.
+initialPhase: discovery
+phases:
+  - { name: discovery }
+  - { name: rendered, terminal: true }
+transitions:
+  - from: discovery
+    to: rendered
+    invariants:
+      - "interview.complete:discovery"
+    defaultGate: auto
+itemSchemas:
+  discovery_answers: {}
+linkSchemas: {}
+interviews:
+  discovery:
+    itemType: discovery_answers
+    completenessRule: all_required
+    questions:
+      - key: title
+        prompt: "Short title for the FR."
+        type: text
+        required: true
+      - key: statement
+        prompt: "One-sentence requirement statement."
+        type: text
+        required: true
+artifactTemplates:
+  fr:
+    source: templates/fr.md
+    target: out/FR-${instance.id}.md
+    phase: rendered

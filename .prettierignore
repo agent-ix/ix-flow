@@ -27,6 +27,11 @@ Thumbs.db
 *.swp
 *.swo
 
+# Eval fixtures (verbatim test data) + generated eval artifacts
+evals/fixtures/
+evals/reports/
+evals/.bin/
+
 # Temporary Files
 *.tgz
 .npm/
