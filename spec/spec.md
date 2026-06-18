@@ -66,33 +66,33 @@ The functional and non-functional requirements are listed below. Each is verifie
 indicated method, traces to the user stories and stakeholder requirements in this bundle,
 and is covered in `matrix.md`.
 
-| ID      | Requirement                                | Verification |
-| ------- | ------------------------------------------ | ------------ |
-| [FR-001](./functional/FR-001-cli-and-plugin-packaging.md)  | CLI and Claude Code plugin packaging       | Inspection   |
+| ID                                                          | Requirement                                | Verification |
+| ----------------------------------------------------------- | ------------------------------------------ | ------------ |
+| [FR-001](./functional/FR-001-cli-and-plugin-packaging.md)   | CLI and Claude Code plugin packaging       | Inspection   |
 | [FR-002](./functional/FR-002-runtime-context-and-flags.md)  | Runtime context and global flags           | Test         |
-| [FR-003](./functional/FR-003-create-and-resolve-runs.md)  | Create and resolve workflow runs           | Test         |
-| [FR-004](./functional/FR-004-inspect-runs.md)  | Report run status                          | Test         |
-| [FR-005](./functional/FR-005-advance-phases.md)  | Advance phases                             | Test         |
-| [FR-006](./functional/FR-006-human-gates.md)  | Human approval gates                       | Test         |
-| [FR-007](./functional/FR-007-record-interview-answers.md)  | Record interview answers                   | Test         |
-| [FR-008](./functional/FR-008-run-command-recipes.md)  | Run command recipes                        | Test         |
-| [FR-009](./functional/FR-009-workflow-data-items.md)  | Add a workflow item                        | Test         |
-| [FR-010](./functional/FR-010-artifact-templates.md)  | Artifact templates                         | Test         |
-| [FR-011](./functional/FR-011-result-envelope.md)  | Structured result envelope                 | Test         |
-| [FR-012](./functional/FR-012-local-instance-store.md)  | Local instance store                       | Test         |
-| [FR-013](./functional/FR-013-event-log-and-integrity.md)  | Event log and integrity                    | Test         |
-| [FR-014](./functional/FR-014-workflow-definition-format.md)  | Workflow definition format                 | Test         |
-| [FR-015](./functional/FR-015-invariants.md)  | Invariant resolution and custom invariants | Test         |
-| [FR-016](./functional/FR-016-skill-on-disk-format.md)  | Skill on-disk format                       | Test         |
-| [FR-017](./functional/FR-017-resume-a-run.md)  | Resume a run                               | Test         |
-| [FR-018](./functional/FR-018-query-run-history.md)  | Query run history                          | Test         |
-| [FR-019](./functional/FR-019-update-a-workflow-item.md)  | Update a workflow item                     | Test         |
-| [FR-020](./functional/FR-020-link-workflow-items.md)  | Link workflow items                        | Test         |
-| [FR-021](./functional/FR-021-optimistic-concurrency.md)  | Optimistic concurrency control             | Analysis     |
+| [FR-003](./functional/FR-003-create-and-resolve-runs.md)    | Create and resolve workflow runs           | Test         |
+| [FR-004](./functional/FR-004-inspect-runs.md)               | Report run status                          | Test         |
+| [FR-005](./functional/FR-005-advance-phases.md)             | Advance phases                             | Test         |
+| [FR-006](./functional/FR-006-human-gates.md)                | Human approval gates                       | Test         |
+| [FR-007](./functional/FR-007-record-interview-answers.md)   | Record interview answers                   | Test         |
+| [FR-008](./functional/FR-008-run-command-recipes.md)        | Run command recipes                        | Test         |
+| [FR-009](./functional/FR-009-workflow-data-items.md)        | Add a workflow item                        | Test         |
+| [FR-010](./functional/FR-010-artifact-templates.md)         | Artifact templates                         | Test         |
+| [FR-011](./functional/FR-011-result-envelope.md)            | Structured result envelope                 | Test         |
+| [FR-012](./functional/FR-012-local-instance-store.md)       | Local instance store                       | Test         |
+| [FR-013](./functional/FR-013-event-log-and-integrity.md)    | Event log and integrity                    | Test         |
+| [FR-014](./functional/FR-014-workflow-definition-format.md) | Workflow definition format                 | Test         |
+| [FR-015](./functional/FR-015-invariants.md)                 | Invariant resolution and custom invariants | Test         |
+| [FR-016](./functional/FR-016-skill-on-disk-format.md)       | Skill on-disk format                       | Test         |
+| [FR-017](./functional/FR-017-resume-a-run.md)               | Resume a run                               | Test         |
+| [FR-018](./functional/FR-018-query-run-history.md)          | Query run history                          | Test         |
+| [FR-019](./functional/FR-019-update-a-workflow-item.md)     | Update a workflow item                     | Test         |
+| [FR-020](./functional/FR-020-link-workflow-items.md)        | Link workflow items                        | Test         |
+| [FR-021](./functional/FR-021-optimistic-concurrency.md)     | Optimistic concurrency control             | Analysis     |
 | [NFR-001](./nonfunctional/NFR-001-agent-readable-output.md) | Agent-readable, deterministic output       | Test         |
-| [NFR-002](./nonfunctional/NFR-002-local-first.md) | Local-first operation                      | Inspection   |
-| [NFR-003](./nonfunctional/NFR-003-tamper-evident-state.md) | Auditable, tamper-evident state            | Analysis     |
-| [NFR-004](./nonfunctional/NFR-004-runner-positioning.md) | Agent workflow runner positioning          | Review       |
+| [NFR-002](./nonfunctional/NFR-002-local-first.md)           | Local-first operation                      | Inspection   |
+| [NFR-003](./nonfunctional/NFR-003-tamper-evident-state.md)  | Auditable, tamper-evident state            | Analysis     |
+| [NFR-004](./nonfunctional/NFR-004-runner-positioning.md)    | Agent workflow runner positioning          | Review       |
 
 ## References
 
