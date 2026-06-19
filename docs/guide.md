@@ -44,7 +44,7 @@ commands:
 
 The plugin ships two skills: **ix-flow** runs a workflow, and **ix-flow-create** authors a
 new one. Author your own workflow below, or install one — like
-[`ix-spec`](https://github.com/agent-ix/ix-spec) — that ships its own.
+[`quoin`](https://github.com/agent-ix/quoin) — that ships its own.
 
 ## Anatomy of a workflow
 

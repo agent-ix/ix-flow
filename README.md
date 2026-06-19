@@ -11,7 +11,7 @@ and human gates — that your agent advances step by step, pausing for your appr
 matters. You **author** a workflow; your **agent runs it** by calling `ix-flow`.
 
 Workflows are packaged as **skills**: a flow definition plus instructions that tell the
-agent how to run it. [`ix-spec`](https://github.com/agent-ix/ix-spec), for example, ships
+agent how to run it. [`quoin`](https://github.com/agent-ix/quoin), for example, ships
 spec skills that drive `ix-flow` — you invoke the skill, and the agent does the rest.
 
 ## Install
@@ -31,7 +31,7 @@ commands:
 ```
 
 The plugin ships two skills: **ix-flow** runs a workflow, and **ix-flow-create** authors a
-new one. Author your own workflow below, or install one like `ix-spec` that ships its own.
+new one. Author your own workflow below, or install one like `quoin` that ships its own.
 
 ## Author a workflow
 
