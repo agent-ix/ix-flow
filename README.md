@@ -32,6 +32,10 @@ commands:
 
 The plugin ships two skills: **ix-flow** runs a workflow, and **ix-flow-create** authors a
 new one. Author your own workflow below, or install one like `quoin` that ships its own.
+No Anthropic API key is required — your Claude subscription is used.
+
+> A clean-room, repeatable check of this exact install path lives in [`smoke/`](./smoke) —
+> run `make install-smoke`.
 
 ## Author a workflow
 
