@@ -68,6 +68,15 @@ evals-rebuild:
 	node evals/run.mjs --rebuild
 
 # =============================================================================
+# Community install smoke test (clean-room Docker: public npm + Claude plugin).
+# Verifies an outside developer can `npm i -g @agent-ix/ix-flow` and load the
+# plugin (skills/workflows) into Claude Code. See smoke/README.md.
+# =============================================================================
+.PHONY: install-smoke
+install-smoke:
+	./smoke/run.sh
+
+# =============================================================================
 # Package Management
 # =============================================================================
 
