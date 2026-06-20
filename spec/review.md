@@ -1,10 +1,10 @@
 ---
 id: REV-001
-title: ix-flow Phase 0 Review
+title: ix-flow Spec Review
 type: Review
 ---
 
-# ix-flow Phase 0 Review
+# ix-flow Spec Review
 
 ## Findings
 
