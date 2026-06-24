@@ -15,7 +15,7 @@ PKG_VERSION=0.0.4 ./smoke/run.sh         # pin for byte-for-byte reproducibility
 - `PLUGIN_SOURCE=github` (default) installs the plugin from `agent-ix/ix-flow` on
   GitHub's default branch — the exact path a community user follows.
 - `PLUGIN_SOURCE=local` installs the plugin from the mounted checkout — validates
-  the manifest in *this* revision before it reaches the default branch. CI uses
+  the manifest in _this_ revision before it reaches the default branch. CI uses
   this (see `.github/workflows/install-smoke.yml`) so a PR's own changes are
   tested.
 
@@ -28,7 +28,7 @@ override** (exactly an outside user's machine):
    `registry.npmjs.org` and runs the `ix-flow` bin. Proves the published CLI and
    its full dependency tree resolve from public npm with zero auth.
 2. **Stage 2 — Claude plugin.** `claude plugin marketplace add` + `plugin
-   install` (the CLI form of the README's `/plugin` steps) clone and install the
+install` (the CLI form of the README's `/plugin` steps) clone and install the
    plugin.
 3. **Assert.** For every skill/workflow in [`expected.txt`](./expected.txt):
    the file is present in the plugin cache **and** — the part that matters to a
