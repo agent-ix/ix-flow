@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-018] Query run history
+# FR-018: Query run history
 
 ## Description
 

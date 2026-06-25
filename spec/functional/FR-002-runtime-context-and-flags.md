@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [FR-002] Runtime context and global flags
+# FR-002: Runtime context and global flags
 
 ## Description
 

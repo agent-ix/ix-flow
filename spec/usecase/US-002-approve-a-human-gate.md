@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-002] Approve a human gate
+# US-002: Approve a human gate
 
 ## Story
 
@@ -31,13 +31,13 @@ should continue. Once the user approves, the run resumes from where it paused.
 These examples clarify the user's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-002-EX-1] The run waits for approval
+### US-002-EX-1: The run waits for approval
 
 - **Given** a run reaches a step that requires human approval
 - **When** the agent tries to advance past it
 - **Then** the run pauses and the user is asked to approve before anything more happens
 
-### [US-002-EX-2] Approval lets the run continue
+### US-002-EX-2: Approval lets the run continue
 
 - **Given** a run is paused waiting for the user at a gate
 - **When** the user approves the pending step

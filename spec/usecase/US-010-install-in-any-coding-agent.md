@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-010] Install ix-flow in the coding agent of my choice
+# US-010: Install ix-flow in the coding agent of my choice
 
 ## Story
 
@@ -35,14 +35,14 @@ them through that agent's own plugin/skill mechanism, leaving the CLI install
 These examples clarify the adopter's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-010-EX-1] Install from Codex
+### US-010-EX-1: Install from Codex
 
 - **Given** a developer working in OpenAI Codex
 - **When** they add the ix-flow marketplace and install the plugin
 - **Then** the `ix-flow` and `ix-flow-create` skills appear in Codex without any
   per-agent re-authoring
 
-### [US-010-EX-2] Install from opencode or Copilot
+### US-010-EX-2: Install from opencode or Copilot
 
 - **Given** a developer working in opencode or GitHub Copilot
 - **When** they install ix-flow's skills for their agent (e.g. `gh skill install`

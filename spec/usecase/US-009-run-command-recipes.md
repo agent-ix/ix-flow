@@ -9,7 +9,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-009] Run command recipes
+# US-009: Run command recipes
 
 ## Story
 
@@ -34,13 +34,13 @@ or a gate is reached, so the user stays in the loop where it matters.
 These examples clarify the author's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-009-EX-1] One command runs the whole sequence
+### US-009-EX-1: One command runs the whole sequence
 
 - **Given** an author has declared a named recipe of several steps
 - **When** the agent runs that recipe
 - **Then** the steps are carried out in order without the agent invoking each one separately
 
-### [US-009-EX-2] A recipe stops at a gate
+### US-009-EX-2: A recipe stops at a gate
 
 - **Given** a recipe whose steps include a step that requires human approval
 - **When** the agent runs the recipe

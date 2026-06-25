@@ -9,7 +9,7 @@ relationships:
     type: "satisfied_by"
 ---
 
-# [StR-001] Reusable workflow runner
+# StR-001: Reusable workflow runner
 
 ## Stakeholder Need
 

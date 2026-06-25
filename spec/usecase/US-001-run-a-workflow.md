@@ -9,7 +9,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-001] Run a workflow to completion
+# US-001: Run a workflow to completion
 
 ## Story
 
@@ -33,13 +33,13 @@ and a clear sense of where things stand along the way.
 These examples clarify the user's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-001-EX-1] A run reaches its terminal phase
+### US-001-EX-1: A run reaches its terminal phase
 
 - **Given** a user has a workflow installed and asks their agent to run it
 - **When** the agent starts the run and advances it through each phase in turn
 - **Then** the run finishes at its terminal phase and the user can see it completed
 
-### [US-001-EX-2] The user checks where a run stands
+### US-001-EX-2: The user checks where a run stands
 
 - **Given** a run is partway through its phases
 - **When** the user asks about progress

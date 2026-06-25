@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [FR-021] Optimistic concurrency control
+# FR-021: Optimistic concurrency control
 
 ## Description
 

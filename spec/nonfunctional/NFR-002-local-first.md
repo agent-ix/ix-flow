@@ -8,7 +8,7 @@ relationships:
     type: "constrains"
 ---
 
-# [NFR-002] Local-first operation
+# NFR-002: Local-first operation
 
 ## Statement
 

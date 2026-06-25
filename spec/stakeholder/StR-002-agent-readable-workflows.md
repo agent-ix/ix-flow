@@ -9,7 +9,7 @@ relationships:
     type: "satisfied_by"
 ---
 
-# [StR-002] Agent-readable workflows
+# StR-002: Agent-readable workflows
 
 ## Stakeholder Need
 

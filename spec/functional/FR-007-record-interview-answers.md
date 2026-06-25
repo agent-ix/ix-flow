@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-007] Record interview answers
+# FR-007: Record interview answers
 
 ## Description
 
