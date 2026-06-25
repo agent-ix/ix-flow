@@ -1,0 +1,14 @@
+{
+  "name": "ix-flow",
+  "interface": {
+    "displayName": "IX Flow"
+  },
+  "plugins": [
+    {
+      "name": "ix-flow",
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Productivity"
+    }
+  ]
+}
