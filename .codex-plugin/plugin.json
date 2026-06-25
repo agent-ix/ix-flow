@@ -1,0 +1,10 @@
+{
+  "name": "ix-flow",
+  "version": "0.1.1",
+  "description": "Run and author Agent IX workflows: a generic /ix-flow runner and an /ix-flow-create authoring skill.",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "IX Flow",
+    "category": "Productivity"
+  }
+}
