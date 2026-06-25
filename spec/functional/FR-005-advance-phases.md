@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-005] Advance phases
+# FR-005: Advance phases
 
 ## Description
 

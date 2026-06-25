@@ -9,7 +9,7 @@ relationships:
     type: "satisfied_by"
 ---
 
-# [StR-005] External workflow authoring
+# StR-005: External workflow authoring
 
 ## Stakeholder Need
 

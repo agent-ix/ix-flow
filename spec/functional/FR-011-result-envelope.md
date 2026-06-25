@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [FR-011] Structured result envelope
+# FR-011: Structured result envelope
 
 ## Description
 

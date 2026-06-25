@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-006] Human approval gates
+# FR-006: Human approval gates
 
 ## Description
 

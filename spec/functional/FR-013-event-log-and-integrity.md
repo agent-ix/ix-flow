@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-013] Event log and integrity
+# FR-013: Event log and integrity
 
 ## Description
 

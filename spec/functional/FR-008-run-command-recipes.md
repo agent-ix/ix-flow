@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-008] Run command recipes
+# FR-008: Run command recipes
 
 ## Description
 

@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-007] Author template-driven artifacts
+# US-007: Author template-driven artifacts
 
 ## Story
 
@@ -32,13 +32,13 @@ gets the same well-formed starting artifacts, populated from its own state.
 These examples clarify the author's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-007-EX-1] Files appear when a phase starts
+### US-007-EX-1: Files appear when a phase starts
 
 - **Given** an author has declared artifact templates for a phase
 - **When** a run enters that phase
 - **Then** the corresponding files are scaffolded for the run to work from
 
-### [US-007-EX-2] Templates reflect the run's own data
+### US-007-EX-2: Templates reflect the run's own data
 
 - **Given** a template that references values gathered earlier in the run
 - **When** the file is scaffolded on phase entry

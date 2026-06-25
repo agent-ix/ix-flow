@@ -9,7 +9,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-016] Skill on-disk format
+# FR-016: Skill on-disk format
 
 ## Description
 

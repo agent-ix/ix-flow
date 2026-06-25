@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-004] Report run status
+# FR-004: Report run status
 
 ## Description
 

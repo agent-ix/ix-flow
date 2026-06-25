@@ -9,7 +9,7 @@ relationships:
     type: "satisfied_by"
 ---
 
-# [StR-004] Shared CLI contract
+# StR-004: Shared CLI contract
 
 ## Stakeholder Need
 

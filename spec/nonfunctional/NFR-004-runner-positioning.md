@@ -8,7 +8,7 @@ relationships:
     type: "constrains"
 ---
 
-# [NFR-004] Agent workflow runner positioning
+# NFR-004: Agent workflow runner positioning
 
 ## Statement
 

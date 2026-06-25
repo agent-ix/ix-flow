@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-010] Artifact templates
+# FR-010: Artifact templates
 
 ## Description
 

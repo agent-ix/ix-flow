@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-001] CLI and Claude Code plugin packaging
+# FR-001: CLI and Claude Code plugin packaging
 
 ## Description
 

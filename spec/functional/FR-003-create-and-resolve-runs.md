@@ -9,7 +9,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-003] Create and resolve workflow runs
+# FR-003: Create and resolve workflow runs
 
 ## Description
 

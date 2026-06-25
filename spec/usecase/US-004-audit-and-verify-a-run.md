@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-004] Audit and verify a run
+# US-004: Audit and verify a run
 
 ## Story
 
@@ -32,13 +32,13 @@ from a convenience into a trustworthy record.
 These examples clarify the user's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-004-EX-1] Reviewing what happened
+### US-004-EX-1: Reviewing what happened
 
 - **Given** a run that has progressed through several phases
 - **When** the user asks to see its history
 - **Then** the user can read the sequence of events that the run recorded
 
-### [US-004-EX-2] Confirming the record is intact
+### US-004-EX-2: Confirming the record is intact
 
 - **Given** a run's recorded history
 - **When** the user asks to verify it

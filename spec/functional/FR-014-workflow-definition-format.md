@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-014] Workflow definition format
+# FR-014: Workflow definition format
 
 ## Description
 

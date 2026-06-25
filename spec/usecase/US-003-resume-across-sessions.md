@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-003] Resume a workflow across sessions
+# US-003: Resume a workflow across sessions
 
 ## Story
 
@@ -31,13 +31,13 @@ starting over. Persistence is what makes coming back later possible.
 These examples clarify the user's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-003-EX-1] A paused run is still there later
+### US-003-EX-1: A paused run is still there later
 
 - **Given** a user started a run in an earlier session and then stopped
 - **When** the user returns in a new session and asks about their runs
 - **Then** the agent can find the earlier run and report where it stands
 
-### [US-003-EX-2] The agent continues from where it left off
+### US-003-EX-2: The agent continues from where it left off
 
 - **Given** a saved run that has not yet finished
 - **When** the user asks their agent to carry on with it
