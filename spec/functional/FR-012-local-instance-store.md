@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-012] Local instance store
+# FR-012: Local instance store
 
 ## Description
 

@@ -8,7 +8,7 @@ relationships:
     type: "constrains"
 ---
 
-# [NFR-003] Auditable, tamper-evident state
+# NFR-003: Auditable, tamper-evident state
 
 ## Statement
 

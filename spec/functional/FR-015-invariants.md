@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-015] Invariant resolution and custom invariants
+# FR-015: Invariant resolution and custom invariants
 
 ## Description
 

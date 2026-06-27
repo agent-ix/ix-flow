@@ -1,0 +1,16 @@
+{
+  "name": "ix-flow",
+  "owner": {
+    "name": "Agent IX"
+  },
+  "metadata": {
+    "description": "Run and author Agent IX workflows from your coding agent."
+  },
+  "plugins": [
+    {
+      "name": "ix-flow",
+      "source": "./",
+      "description": "Run and author Agent IX workflows."
+    }
+  ]
+}

@@ -9,7 +9,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-006] Publish a workflow set
+# US-006: Publish a workflow set
 
 ## Story
 
@@ -34,13 +34,13 @@ silently shadowing another workflow.
 These examples clarify the author's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-006-EX-1] Invoking a published workflow by name
+### US-006-EX-1: Invoking a published workflow by name
 
 - **Given** an author has published a set of related workflows
 - **When** a user runs one of them by its name
 - **Then** the workflow runs without the user supplying any filesystem path
 
-### [US-006-EX-2] A name conflict is reported
+### US-006-EX-2: A name conflict is reported
 
 - **Given** a workflow name in the set matches one that is already available
 - **When** the author publishes the set

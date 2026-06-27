@@ -8,7 +8,7 @@ relationships:
     type: "constrains"
 ---
 
-# [NFR-001] Agent-readable, deterministic output
+# NFR-001: Agent-readable, deterministic output
 
 ## Statement
 

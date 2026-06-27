@@ -68,6 +68,16 @@ evals-rebuild:
 	node evals/run.mjs --rebuild
 
 # =============================================================================
+# Community install smoke test (clean-room Docker: public npm + agent plugins).
+# Verifies an outside developer can `npm i -g @agent-ix/ix-flow` and install the
+# plugin into Claude Code, OpenAI Codex, opencode, and GitHub Copilot.
+# See smoke/README.md.
+# =============================================================================
+.PHONY: install-smoke
+install-smoke:
+	./smoke/run.sh
+
+# =============================================================================
 # Package Management
 # =============================================================================
 

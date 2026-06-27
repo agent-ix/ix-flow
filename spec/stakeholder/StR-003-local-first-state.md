@@ -9,7 +9,7 @@ relationships:
     type: "satisfied_by"
 ---
 
-# [StR-003] Local-first workflow state
+# StR-003: Local-first workflow state
 
 ## Stakeholder Need
 

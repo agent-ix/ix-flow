@@ -7,7 +7,7 @@ relationships:
     type: "traces_to"
 ---
 
-# [US-005] Author a workflow as a skill
+# US-005: Author a workflow as a skill
 
 ## Story
 
@@ -32,13 +32,13 @@ local iteration is the whole point.
 These examples clarify the author's expectations. They are illustrative only —
 not test cases and not verification criteria.
 
-### [US-005-EX-1] Running a workflow from its folder
+### US-005-EX-1: Running a workflow from its folder
 
 - **Given** an author has a workflow defined as a skill directory on disk
 - **When** they run it by pointing at that directory
 - **Then** the workflow runs without the author having published any package
 
-### [US-005-EX-2] Iterating with custom checks
+### US-005-EX-2: Iterating with custom checks
 
 - **Given** the author adds an invariants script alongside the workflow definition
 - **When** they run the workflow again from the same folder

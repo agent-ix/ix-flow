@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-019] Update a workflow item
+# FR-019: Update a workflow item
 
 ## Description
 

@@ -22,16 +22,69 @@ Install the CLI your agent calls:
 npm i -g @agent-ix/ix-flow
 ```
 
-Then install the Claude Code plugin, which adds the `/ix-flow` and `/ix-flow-create`
-commands:
+Then add the plugin to your coding agent. The same two skills — **ix-flow** (runs a workflow)
+and **ix-flow-create** (authors a new one) — install into **Claude Code, OpenAI Codex,
+opencode, and GitHub Copilot**. Pick your agent below. No Anthropic API key is required —
+your existing agent subscription is used.
+
+<details>
+<summary><b>Claude Code</b></summary>
+
+Run these inside Claude Code (they add the `/ix-flow` and `/ix-flow-create` commands):
 
 ```text
 /plugin marketplace add agent-ix/ix-flow
 /plugin install ix-flow@ix-flow
 ```
 
-The plugin ships two skills: **ix-flow** runs a workflow, and **ix-flow-create** authors a
-new one. Author your own workflow below, or install one like `quoin` that ships its own.
+</details>
+
+<details>
+<summary><b>OpenAI Codex</b></summary>
+
+```bash
+codex plugin marketplace add agent-ix/ix-flow
+codex plugin add ix-flow
+```
+
+Or browse and install ix-flow from the `/plugins` menu inside the Codex TUI.
+
+</details>
+
+<details>
+<summary><b>opencode</b></summary>
+
+Install the skills with the GitHub CLI (requires `gh` ≥ 2.90.0). `--all` installs
+both skills; `--scope user` makes them available in every repo:
+
+```bash
+gh skill install agent-ix/ix-flow --all --scope user --agent opencode
+```
+
+</details>
+
+<details>
+<summary><b>GitHub Copilot</b></summary>
+
+With the Copilot CLI:
+
+```bash
+copilot plugin marketplace add agent-ix/ix-flow
+copilot plugin install ix-flow@ix-flow
+```
+
+Or install the skills with the GitHub CLI (requires `gh` ≥ 2.90.0):
+
+```bash
+gh skill install agent-ix/ix-flow --all --scope user --agent github-copilot
+```
+
+</details>
+
+Author your own workflow below, or install one like `quoin` that ships its own.
+
+> A clean-room, repeatable check of the Claude Code install path lives in [`smoke/`](./smoke) —
+> run `make install-smoke`.
 
 ## Author a workflow
 

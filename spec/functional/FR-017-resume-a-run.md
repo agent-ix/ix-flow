@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-017] Resume a run
+# FR-017: Resume a run
 
 ## Description
 

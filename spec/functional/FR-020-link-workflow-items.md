@@ -7,7 +7,7 @@ relationships:
     type: "implements"
 ---
 
-# [FR-020] Link workflow items
+# FR-020: Link workflow items
 
 ## Description
 

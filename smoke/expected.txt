@@ -1,0 +1,5 @@
+# Artifacts a fresh community user must get after installing the ix-flow plugin.
+# Format: "<kind> <name>"   kind ∈ {plugin, skill, workflow}
+plugin ix-flow
+skill ix-flow
+skill ix-flow-create

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@agent-ix/ix-cli-core':
-        specifier: 0.10.2
-        version: 0.10.2(@oclif/core@4.11.4)
+        specifier: '>=0.10.6'
+        version: 0.10.6(@oclif/core@4.11.4)
       yaml:
         specifier: ^2.9.0
         version: 2.9.0
@@ -63,16 +63,19 @@ importers:
 
 packages:
 
-  '@agent-ix/ix-cli-core@0.10.2':
-    resolution: {integrity: sha512-eAOnCy2zDnDr0d4jc2jy/MdWqMfI0VCHwJ34U9fOk6JC1FIHDPJRdchhgBC53mvUQCqs/OkQ1eW/ocHjWGUNhw==, tarball: https://npm.pkg.github.com/download/@agent-ix/ix-cli-core/0.10.2/ccfda2518091adaec48f8e04a31cfb91e7517e5c}
+  '@agent-ix/ix-cli-core@0.10.6':
+    resolution: {integrity: sha512-X+7tCUXIMAV5sa9BaXzhRrB6JcfCsNTuKPXfTzB4+Q2yOxh+HM29ouhqhRE76rc8kkubLGpQ/VL/9bf6CKWKSw==}
     peerDependencies:
       '@oclif/core': '>=4.11.4'
 
-  '@agent-ix/ix-ui-cli@0.4.6':
-    resolution: {integrity: sha512-lZ4qHcxK6eoEeHreg8K74I4qRybj1Hfr6GnmN3m681Sx8RO6sNzHg6nxB02YGAbk2VlPrcJzx0EI5j5v+eM4Mw==, tarball: https://npm.pkg.github.com/download/@agent-ix/ix-ui-cli/0.4.6/496d4982f4ff0798bc823a3fdd2daca2e496e160}
+  '@agent-ix/ix-ui-cli@0.4.10':
+    resolution: {integrity: sha512-03CRd4KdX7IpcH7WOlQPjpPFzu4d+wW12IYKp1Q+kkakzjqveFJtSh6flP2Kez8QkFZQKI7aDdDTl8ewII3u/Q==}
 
-  '@agent-ix/ix-ui-semantic@0.4.6':
-    resolution: {integrity: sha512-ZynzjZBmUu4b7vwlyKQxYDxLn1nKCNS9DslFEy2shJqbR9KEK631/FiEQb9xBvlw7wJHqmKR9xWu6iJZd86TQQ==, tarball: https://npm.pkg.github.com/download/@agent-ix/ix-ui-semantic/0.4.6/6a53752c2011b3e2ea97b26f035630cc5a48db0e}
+  '@agent-ix/ix-ui-semantic@0.4.10':
+    resolution: {integrity: sha512-kjDiorrEnWRJlSrQvLiNC+wblBwwZtXcesBD/9KhtOAMGt6WBHMjTr2Ae8iepzcZ6lqsPk1m3EY5YQmoOeVurw==}
+
+  '@agent-ix/ts-plugin-kit@0.1.3':
+    resolution: {integrity: sha512-tHBt0LEX/J69vCmW3gr8ppxkDsZAvWERIQ6mvD4ztIHTMqfU+4dM+Tv2Cs6PZ7Pzm9sgs1Qzjb2L+seyto6u/A==}
 
   '@alcalzone/ansi-tokenize@0.3.0':
     resolution: {integrity: sha512-p+CMKJ93HFmLkjXKlXiVGlMQEuRb6H0MokBSwUsX+S6BRX8eV5naFZpQJFfJHjRZY0Hmnqy1/r6UWl3x+19zYA==}
@@ -1669,9 +1672,10 @@ packages:
 
 snapshots:
 
-  '@agent-ix/ix-cli-core@0.10.2(@oclif/core@4.11.4)':
+  '@agent-ix/ix-cli-core@0.10.6(@oclif/core@4.11.4)':
     dependencies:
-      '@agent-ix/ix-ui-cli': 0.4.6
+      '@agent-ix/ix-ui-cli': 0.4.10
+      '@agent-ix/ts-plugin-kit': 0.1.3
       '@clack/prompts': 1.5.1
       '@napi-rs/keyring': 1.3.0
       '@oclif/core': 4.11.4
@@ -1685,9 +1689,9 @@ snapshots:
       - react-devtools-core
       - utf-8-validate
 
-  '@agent-ix/ix-ui-cli@0.4.6':
+  '@agent-ix/ix-ui-cli@0.4.10':
     dependencies:
-      '@agent-ix/ix-ui-semantic': 0.4.6
+      '@agent-ix/ix-ui-semantic': 0.4.10
       execa: 9.6.1
       ink: 7.0.5(react@19.2.7)
       ink-select-input: 6.2.0(ink@7.0.5(react@19.2.7))(react@19.2.7)
@@ -1701,7 +1705,9 @@ snapshots:
       - react-devtools-core
       - utf-8-validate
 
-  '@agent-ix/ix-ui-semantic@0.4.6': {}
+  '@agent-ix/ix-ui-semantic@0.4.10': {}
+
+  '@agent-ix/ts-plugin-kit@0.1.3': {}
 
   '@alcalzone/ansi-tokenize@0.3.0':
     dependencies:
