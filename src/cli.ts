@@ -3,7 +3,10 @@ import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { configureRuntimeContext } from "@agent-ix/ix-cli-core";
+import {
+  configureRuntimeContext,
+  maybeOfferUpdate,
+} from "@agent-ix/ix-cli-core";
 import type { JsonValue } from "./workflow-core/index.js";
 import { WorkflowCommandRunner } from "./workflow-runner/runner.js";
 import {
@@ -60,6 +63,15 @@ export async function main(argv: string[]): Promise<void> {
     projectConfigRoot: resolve(process.cwd(), ".ix"),
     projectConfigEnabled: parsed.flags["no-project-config"] !== true,
   });
+
+  // Offer a newer published ix-flow (throttled, interactive-only, silent under
+  // --json / CI / non-TTY). Never blocks or throws.
+  if (parsed.flags.json !== true) {
+    await maybeOfferUpdate({
+      packageName: "@agent-ix/ix-flow",
+      currentVersion: packageVersion(),
+    });
+  }
 
   const runner = new WorkflowCommandRunner({
     config: {
