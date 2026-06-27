@@ -176,13 +176,55 @@ This package builds on `@agent-ix/ix-cli-core` from the standalone `ix-cli-core`
 
 ### Evals
 
-Beyond the unit tests, [`evals/`](evals/README.md) drives the **real `claude` agent** (via
-agent-pty + tmux) through each workflow skill end-to-end and profiles the run. They cost
-tokens and minutes, so they are opt-in:
+Beyond the unit tests, `ix-flow` uses the shared
+[`@agent-ix/cli-agent-evals`](../cli-agent-evals) toolkit to drive real coding-agent
+CLIs through each workflow skill end-to-end. The suite definition lives in
+[`cli-agent-evals.config.mjs`](cli-agent-evals.config.mjs); project-specific fixtures,
+prompts, and assertions remain under [`evals/`](evals/).
+
+Live runs use `agent-pty` + tmux and cost tokens/minutes, so they are opt-in:
 
 ```bash
 make evals          # canary subset (one scenario per family)
 make evals-all      # full corpus (EV-001..EV-022)
+make eval FILTER=EV-013
+make evals-rebuild
+```
+
+Direct CLI form:
+
+```bash
+node ../cli-agent-evals/bin/cli-evals.js run \
+  --suite ./cli-agent-evals.config.mjs \
+  --canary \
+  --agent claude \
+  --model sonnet
+```
+
+Agent plugin setup for authoring/running evals from an agent:
+
+```bash
+claude plugin marketplace add agent-ix/cli-agent-evals
+claude plugin install cli-agent-evals
+
+codex plugin marketplace add agent-ix/cli-agent-evals
+codex plugin add cli-agent-evals
+
+gh skill install agent-ix/cli-agent-evals --all --scope user --agent opencode
+gh skill install agent-ix/cli-agent-evals --all --scope user --agent github-copilot
+```
+
+Minimal integration pattern:
+
+```js
+import { defineSuite } from "../cli-agent-evals/dist/index.js";
+import { SCENARIOS } from "./evals/scenarios/index.mjs";
+
+export default defineSuite({
+  name: "ix-flow",
+  rootDir: import.meta.dirname,
+  scenarios: SCENARIOS,
+});
 ```
 
 ## License

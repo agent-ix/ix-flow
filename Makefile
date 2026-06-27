@@ -53,19 +53,23 @@ REPEATS ?= 1
 
 .PHONY: evals
 evals:
-	node evals/run.mjs --canary --model $(MODEL) --repeats $(REPEATS)
+	pnpm --dir ../cli-agent-evals run build
+	node ../cli-agent-evals/bin/cli-evals.js run --suite ./cli-agent-evals.config.mjs --canary --agent claude --model $(MODEL) --repeats $(REPEATS)
 
 .PHONY: evals-all
 evals-all:
-	node evals/run.mjs --all --model $(MODEL) --repeats $(REPEATS)
+	pnpm --dir ../cli-agent-evals run build
+	node ../cli-agent-evals/bin/cli-evals.js run --suite ./cli-agent-evals.config.mjs --all --agent claude --model $(MODEL) --repeats $(REPEATS)
 
 .PHONY: eval
 eval:
-	node evals/run.mjs --filter $(FILTER) --model $(MODEL) --repeats $(REPEATS) --keep
+	pnpm --dir ../cli-agent-evals run build
+	node ../cli-agent-evals/bin/cli-evals.js run --suite ./cli-agent-evals.config.mjs --filter $(FILTER) --agent claude --model $(MODEL) --repeats $(REPEATS) --keep
 
 .PHONY: evals-rebuild
 evals-rebuild:
-	node evals/run.mjs --rebuild
+	pnpm --dir ../cli-agent-evals run build
+	node ../cli-agent-evals/bin/cli-evals.js rebuild --suite ./cli-agent-evals.config.mjs --report evals/reports/latest.json
 
 # =============================================================================
 # Community install smoke test (clean-room Docker: public npm + agent plugins).
