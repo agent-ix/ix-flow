@@ -7,7 +7,11 @@ import {
   configureRuntimeContext,
   maybeOfferUpdate,
 } from "@agent-ix/ix-cli-core";
-import type { JsonValue } from "./workflow-core/index.js";
+import {
+  GateModeSchema,
+  type GateMode,
+  type JsonValue,
+} from "./workflow-core/index.js";
 import { WorkflowCommandRunner } from "./workflow-runner/runner.js";
 import {
   jsonEnvelope,
@@ -26,6 +30,7 @@ Agent workflow runner for Agent IX harnesses.
 
 Usage:
   ix-flow run <flow> [--path <skill-dir>] [--id <id>] [--name <name>] [--target <ref>...]
+                     [--gate-mode <auto|hitl|full-auto>] [--gate <from>-><to>=<mode>...]
   ix-flow status <run-id>
   ix-flow resume <run-id>
   ix-flow advance <run-id> <phase>
@@ -42,6 +47,12 @@ Global flags:
   --json
   --state-dir <dir>       Defaults to ~/.ix/flows
   --config-root <dir>     Defaults to ~/.ix
+
+Gate overrides apply to the run only; the definition is never modified. Use
+--gate-mode full-auto to drive a hitl workflow unattended (each auto-cleared
+gate is recorded as gate.auto_acked), and --gate to exempt single transitions:
+
+  ix-flow run git-coder --gate-mode full-auto --gate 'implementing->committed=hitl'
 `;
 
 export async function main(argv: string[]): Promise<void> {
@@ -97,6 +108,8 @@ export async function main(argv: string[]): Promise<void> {
             kind: "file",
             ref,
           })),
+          gateMode: gateModeFlag(parsed),
+          gates: gateOverrides(parsed),
         }),
         parsed,
       );
@@ -237,7 +250,7 @@ function parseArgs(argv: string[]): ParsedArgs {
           : argv[i + 1] && !argv[i + 1].startsWith("-")
             ? argv[++i]
             : true;
-      if (key === "target") {
+      if (key === "target" || key === "gate") {
         flags[key] = [
           ...arrayFlag({ flags } as ParsedArgs, key),
           String(value),
@@ -254,6 +267,39 @@ function parseArgs(argv: string[]): ParsedArgs {
     }
   }
   return { command, positionals, flags };
+}
+
+function parseGateMode(value: string, flag: string): GateMode {
+  const parsed = GateModeSchema.safeParse(value);
+  if (!parsed.success)
+    throw usageError(
+      `${flag} must be one of ${GateModeSchema.options.join(", ")} (got '${value}')`,
+    );
+  return parsed.data;
+}
+
+function gateModeFlag(parsed: ParsedArgs): GateMode | undefined {
+  const value = stringFlag(parsed, "gate-mode");
+  return value === undefined ? undefined : parseGateMode(value, "--gate-mode");
+}
+
+/** Parse repeatable `--gate <from>-><to>=<mode>` into a transition-keyed map. */
+function gateOverrides(
+  parsed: ParsedArgs,
+): Record<string, GateMode> | undefined {
+  const entries = arrayFlag(parsed, "gate");
+  if (entries.length === 0) return undefined;
+  const gates: Record<string, GateMode> = {};
+  for (const entry of entries) {
+    const eq = entry.lastIndexOf("=");
+    if (eq === -1)
+      throw usageError(`--gate expects <from>-><to>=<mode> (got '${entry}')`);
+    const key = entry.slice(0, eq).trim();
+    if (!key.includes("->"))
+      throw usageError(`--gate expects <from>-><to>=<mode> (got '${entry}')`);
+    gates[key] = parseGateMode(entry.slice(eq + 1).trim(), "--gate");
+  }
+  return gates;
 }
 
 async function emit(

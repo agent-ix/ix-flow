@@ -17,6 +17,7 @@ import {
   verifyChain,
   type Actor,
   type ArtifactRecord,
+  type GateMode,
   type InstanceStore,
   type InvariantEvaluator,
   type JsonValue,
@@ -25,6 +26,7 @@ import {
   type SkillPathRef,
   type Transition,
   type Workflow,
+  type WorkflowDef,
   type WorkflowGate,
   type WorkflowGateAck,
   type WorkflowEvent,
@@ -82,6 +84,18 @@ export interface CreateWorkflowInput {
    * caller re-specifying it. Per FR-011.
    */
   skillPath?: string;
+  /**
+   * Override every transition's gate mode for this run only. Lets a supervisor
+   * drive a `hitl` definition unattended without editing (and so re-hashing)
+   * the definition, leaving the same def human-gated for interactive use.
+   */
+  gateMode?: GateMode;
+  /**
+   * Per-transition gate overrides keyed `"<from>-><to>"`. Applied after
+   * `gateMode`, so a blanket mode can be set and individual transitions
+   * exempted. Unknown keys are rejected rather than silently ignored.
+   */
+  gates?: Record<string, GateMode>;
 }
 
 export interface AdvanceWorkflowInput {
@@ -195,12 +209,7 @@ export class WorkflowCommandRunner {
         name: input.name ?? def.name,
         targets: input.targets ?? [],
         phase: def.initialPhase,
-        gateConfig: Object.fromEntries(
-          def.transitions.map((transition) => [
-            `${transition.from}->${transition.to}`,
-            transition.defaultGate,
-          ]),
-        ),
+        gateConfig: resolveGateConfig(def, input),
         openGates: [],
         satisfiedGates: [],
         items: {},
@@ -604,6 +613,31 @@ export class WorkflowCommandRunner {
       const next: WorkflowInstance = renderedArtifacts
         ? { ...withGatesCleared, artifacts: renderedArtifacts }
         : withGatesCleared;
+      const events: WorkflowEvent[] = [];
+      let prevHash = current.events.at(-1)?.hash ?? GENESIS_HASH;
+      // A gate the definition would have deferred to a human was cleared by
+      // run-level `full-auto`. Record that explicitly: the audit trail should
+      // show no human reviewed this, rather than look like an ordinary
+      // auto transition.
+      if (gateMode === "full-auto" && transition.defaultGate === "hitl") {
+        const autoAck = createEvent(
+          {
+            id: this.eventId(),
+            ts: this.timestamp(),
+            actor: this.actor,
+            kind: "gate.auto_acked",
+            payload: {
+              transitionKey,
+              from: current.phase,
+              to: input.to,
+              defaultGate: transition.defaultGate,
+            },
+          },
+          prevHash,
+        );
+        events.push(autoAck);
+        prevHash = autoAck.hash;
+      }
       const event = createEvent(
         {
           id: this.eventId(),
@@ -612,11 +646,12 @@ export class WorkflowCommandRunner {
           kind: "phase.advanced",
           payload: { from: current.phase, to: input.to },
         },
-        current.events.at(-1)?.hash ?? GENESIS_HASH,
+        prevHash,
       );
+      events.push(event);
       await this.store.appendAndSave(
         current.id,
-        [event],
+        events,
         next,
         current.stateVersion,
       );
@@ -629,7 +664,7 @@ export class WorkflowCommandRunner {
       );
       return {
         data: saved,
-        events: [event],
+        events,
         summary: summarizeInstance(saved),
         interview_followups: followups,
       };
@@ -1089,6 +1124,35 @@ function objectValue(
 
 function keyForTransition(transition: Pick<Transition, "from" | "to">): string {
   return `${transition.from}->${transition.to}`;
+}
+
+/**
+ * Seed a run's gate map from the definition, then apply the caller's run-level
+ * overrides. The definition itself is never mutated, so its content hash — and
+ * therefore its meaning for every other run — is unchanged.
+ */
+function resolveGateConfig(
+  def: WorkflowDef,
+  input: Pick<CreateWorkflowInput, "gateMode" | "gates">,
+): Record<string, GateMode> {
+  const keys = def.transitions.map(keyForTransition);
+  const config = Object.fromEntries(
+    def.transitions.map((transition) => [
+      keyForTransition(transition),
+      input.gateMode ?? transition.defaultGate,
+    ]),
+  );
+  for (const [key, mode] of Object.entries(input.gates ?? {})) {
+    if (!(key in config)) {
+      throw new WorkflowCoreError(
+        "gate_override_unknown_transition",
+        `Gate override '${key}' does not match any transition in '${def.name}'.`,
+        { transition: key, known: keys },
+      );
+    }
+    config[key] = mode;
+  }
+  return config;
 }
 
 function workflowInstanceValue(value: unknown): WorkflowInstance | undefined {
