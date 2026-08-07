@@ -81,6 +81,17 @@ evals-rebuild:
 install-smoke:
 	./smoke/run.sh
 
+# Snapshot publish to the local registry. publishConfig points at public npmjs
+# (the stable release path), so the registry is pinned here to keep snapshot
+# versions off npmjs.
+.PHONY: publish
+publish:
+	ORIG_VERSION=$$(node -p "require('./package.json').version") && \
+	VERSION=$$(node scripts/build-tools.js version | sed 's/^v//') && \
+	pnpm version $$VERSION --no-git-tag-version  && \
+	pnpm publish --no-git-checks --registry http://npm.ix/ && \
+	npm pkg set version=$$ORIG_VERSION
+
 # =============================================================================
 # Package Management
 # =============================================================================

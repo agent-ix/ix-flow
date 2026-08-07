@@ -29,10 +29,12 @@ they can branch on results without brittle heuristics.
 
 ## Validation Criteria
 
-This need is considered satisfied when the CLI resolves configuration from a shared
-root, when an explicit flag takes precedence over an environment variable and an
-environment variable takes precedence over configured values, and when the CLI can
-produce machine-readable output that an agent parses without scraping human text.
+
+| ID | Criteria | Validation |
+|----|----------|------------|
+| StR-004-VC-1 | The CLI resolves configuration from a shared root. | Demonstration |
+| StR-004-VC-2 | An explicit flag takes precedence over an environment variable and an environment variable takes precedence over configured values. | Demonstration |
+| StR-004-VC-3 | The CLI can produce machine-readable output that an agent parses without scraping human text. | Demonstration |
 
 ## Stakeholders
 
