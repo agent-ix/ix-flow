@@ -8,12 +8,9 @@ name: install-smoke
 # opencode/Copilot stages use `gh skill`, which authenticates with the built-in
 # GITHUB_TOKEN (read access to this repo) — without it they skip, not fail.
 
+# Manual only. Never on push, pull request, commit, or merge.
 on:
-  pull_request:
-  push:
-    tags: ["*.*.*"]
   workflow_dispatch:
-
 permissions:
   contents: read
 

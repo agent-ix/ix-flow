@@ -1,11 +1,8 @@
 name: CI
 
+# Manual only. Never on push, pull request, commit, or merge.
 on:
-  pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
-
 jobs:
   ci:
     uses: agent-ix/nodejs-actions/.github/workflows/build-test.yml@main
