@@ -1,8 +1,8 @@
 ---
 name: intake
 description: Collect a request through a short interview, then draft and finish.
-contributes:
-  workflows: ./workflows
+metadata:
+  ix-flow-workflows: ./workflows
 ---
 
 # /intake

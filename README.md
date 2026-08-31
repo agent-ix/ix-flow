@@ -120,8 +120,8 @@ transitions:
 ---
 name: release
 description: Drive a change from draft through review to release.
-contributes:
-  workflows: ./workflows
+metadata:
+  ix-flow-workflows: ./workflows
 ---
 
 # /release

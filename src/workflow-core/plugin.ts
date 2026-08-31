@@ -17,6 +17,7 @@ export interface WorkflowPlugin {
 }
 
 interface SkillFrontmatter {
+  metadata?: { "ix-flow-workflows"?: string };
   contributes?: { workflows?: string };
 }
 
@@ -41,11 +42,29 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
 
   const md = await readFile(skillMdPath, "utf8");
   const frontmatter = parseFrontmatter(md, skillMdPath);
-  const workflowsRel = frontmatter?.contributes?.workflows;
+  const standardWorkflowsRel = frontmatter?.metadata?.["ix-flow-workflows"];
+  const legacyWorkflowsRel = frontmatter?.contributes?.workflows;
+  if (
+    typeof standardWorkflowsRel === "string" &&
+    standardWorkflowsRel.length > 0 &&
+    typeof legacyWorkflowsRel === "string" &&
+    legacyWorkflowsRel.length > 0 &&
+    standardWorkflowsRel !== legacyWorkflowsRel
+  ) {
+    throw new WorkflowCoreError(
+      "skill_format_invalid",
+      `SKILL.md frontmatter declarations 'metadata.ix-flow-workflows' and legacy 'contributes.workflows' must match`,
+      { path: skillMdPath },
+    );
+  }
+  const workflowsRel =
+    typeof standardWorkflowsRel === "string" && standardWorkflowsRel.length > 0
+      ? standardWorkflowsRel
+      : legacyWorkflowsRel;
   if (typeof workflowsRel !== "string" || workflowsRel.length === 0) {
     throw new WorkflowCoreError(
       "skill_format_invalid",
-      `SKILL.md frontmatter must declare 'contributes.workflows: <relative-dir>'`,
+      `SKILL.md frontmatter must declare 'metadata.ix-flow-workflows: <relative-dir>' or legacy 'contributes.workflows: <relative-dir>'`,
       { path: skillMdPath },
     );
   }
