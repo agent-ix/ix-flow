@@ -304,6 +304,8 @@ use the same relative-directory value.
 
 The workflow directory must stay within the skill: absolute paths, `..` path segments, and
 symbolic links that resolve outside the skill are rejected with `skill_format_invalid`.
+Each `workflows/<name>` directory and its `def.yaml` must likewise resolve within the
+declared workflow directory.
 
 **3. Smoke-test it:**
 

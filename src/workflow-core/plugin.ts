@@ -83,21 +83,32 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
   const scriptInvariants = await loadSkillInvariants(root);
 
   // Filter to directories, tolerating dangling symlinks and other entries
-  // we can't stat. `statSync` follows symlinks and throws on broken
-  // targets; swallow that into the same "not a directory" bucket.
-  const subdirs = readdirSync(workflowsDir).filter((entry) => {
+  // we can't stat. Every usable entry retains its validated canonical path so
+  // later reads cannot follow a swapped or escaping directory symlink.
+  const subdirs: string[] = [];
+  for (const name of readdirSync(workflowsDir)) {
+    const entryPath = join(workflowsDir, name);
     try {
-      return statSync(join(workflowsDir, entry)).isDirectory();
+      if (!statSync(entryPath).isDirectory()) continue;
     } catch {
-      return false;
+      continue;
     }
-  });
+    const resolvedEntryPath = realpathSync(entryPath);
+    if (!isPathContainedBy(workflowsDir, resolvedEntryPath)) {
+      throw workflowEntryConfinementError(entryPath);
+    }
+    subdirs.push(resolvedEntryPath);
+  }
 
   const workflows: Workflow[] = [];
-  for (const name of subdirs) {
-    const defPath = join(workflowsDir, name, "def.yaml");
+  for (const workflowDir of subdirs) {
+    const defPath = join(workflowDir, "def.yaml");
     if (!existsSync(defPath)) continue;
-    const yamlText = await readFile(defPath, "utf8");
+    const resolvedDefPath = realpathSync(defPath);
+    if (!isPathContainedBy(workflowsDir, resolvedDefPath)) {
+      throw workflowEntryConfinementError(defPath);
+    }
+    const yamlText = await readFile(resolvedDefPath, "utf8");
     let raw: unknown;
     try {
       raw = parseYaml(yamlText);
@@ -174,10 +185,11 @@ function resolveWorkflowDirectory(
     );
   }
 
-  if (!isPathContainedBy(realpathSync(skillRoot), realpathSync(workflowsDir))) {
+  const resolvedWorkflowsDir = realpathSync(workflowsDir);
+  if (!isPathContainedBy(realpathSync(skillRoot), resolvedWorkflowsDir)) {
     throw workflowDirectoryConfinementError(skillMdPath, workflowsRel);
   }
-  return workflowsDir;
+  return resolvedWorkflowsDir;
 }
 
 function isPathContainedBy(root: string, candidate: string): boolean {
@@ -198,6 +210,14 @@ function workflowDirectoryConfinementError(
     "skill_format_invalid",
     "SKILL.md workflow directory must be a relative path contained within the skill",
     { path, workflowsRel },
+  );
+}
+
+function workflowEntryConfinementError(path: string): WorkflowCoreError {
+  return new WorkflowCoreError(
+    "skill_format_invalid",
+    "Workflow entries and definitions must resolve within the declared workflows directory",
+    { path },
   );
 }
 

@@ -25,7 +25,10 @@ relative-directory value; conflicting declarations SHALL fail with
 traversal (`..`) segment, and its resolved real path SHALL remain within the
 skill directory; violations SHALL fail with `skill_format_invalid`. The declared
 directory SHALL hold one `workflows/<name>/def.yaml` per workflow and MAY include
-a `scripts/invariants.js` (an ESM module exporting an `invariants` object).
+a `scripts/invariants.js` (an ESM module exporting an `invariants` object). Every
+discovered `workflows/<name>` directory and `def.yaml` real path SHALL remain
+within the resolved declared workflow directory; an escaping child or definition
+SHALL fail with `skill_format_invalid` before its content is read.
 
 Only `invariants.js` SHALL be supported as a skill script; any other script
 SHALL fail with `skill_script_unsupported`. A missing or invalid `SKILL.md`
@@ -47,7 +50,7 @@ workflow name; a multi-workflow skill referenced without a name SHALL fail with
 | FR-016-AC-3 | Matching dual declarations are accepted; conflicting dual declarations fail with `skill_format_invalid`  | Test (tests/plugin.test.ts)   |
 | FR-016-AC-4 | Missing workflow metadata fails with `skill_format_invalid` and a diagnostic naming both supported forms | Test (tests/plugin.test.ts)   |
 | FR-016-AC-5 | An explicit empty or malformed declaration fails even when the other declaration is valid                | Test (tests/plugin.test.ts)   |
-| FR-016-AC-6 | Absolute, parent-traversing, and real-path-escaping workflow directories fail closed for both forms      | Test (tests/plugin.test.ts)   |
+| FR-016-AC-6 | Absolute, traversing, or escaping declarations, child directories, and definitions fail closed           | Test (tests/plugin.test.ts)   |
 | FR-016-AC-7 | Only `invariants.js` ESM is supported, else `skill_script_unsupported`                                   | Analysis                      |
 | FR-016-AC-8 | A single-workflow skill resolves without a name; ambiguous fails with `workflow_ambiguous`               | Analysis                      |
 
