@@ -26,7 +26,7 @@ evidence in the source, tests, or packaging. Test evidence cites files under `te
 | [FR-013](./functional/FR-013-event-log-and-integrity.md)    | Test         | `tests/commands.test.ts` (`verify` → chain intact), `src/workflow-core/event.ts`                        |
 | [FR-014](./functional/FR-014-workflow-definition-format.md) | Test         | `examples/*/workflows/*/def.yaml` load, `src/workflow-core/definition.ts`                               |
 | [FR-015](./functional/FR-015-invariants.md)                 | Test         | `tests/commands.test.ts` (built-ins), `tests/engine-features.test.ts` (custom + unregistered)           |
-| [FR-016](./functional/FR-016-skill-on-disk-format.md)       | Test         | `tests/plugin.test.ts`, `examples/release`, `examples/intake` (`--path` load)                           |
+| [FR-016](./functional/FR-016-skill-on-disk-format.md)       | Test         | `tests/plugin.test.ts` (metadata validation and confinement), examples (`--path` load)                  |
 | [FR-017](./functional/FR-017-resume-a-run.md)               | Test         | `tests/commands.test.ts` (resume re-emits status)                                                       |
 | [FR-018](./functional/FR-018-query-run-history.md)          | Test         | `tests/commands.test.ts` (history returns events)                                                       |
 | [FR-019](./functional/FR-019-update-a-workflow-item.md)     | Test         | `tests/commands.test.ts` (update-item patches by id)                                                    |

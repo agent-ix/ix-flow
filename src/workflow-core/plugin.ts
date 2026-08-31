@@ -1,6 +1,6 @@
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, realpathSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { isAbsolute, join, relative, resolve, sep, win32 } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { parseWorkflowDef, type PinnedWorkflowDef } from "./definition.js";
@@ -74,14 +74,11 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
     );
   }
 
-  const workflowsDir = resolve(root, workflowsRel);
-  if (!existsSync(workflowsDir) || !statSync(workflowsDir).isDirectory()) {
-    throw new WorkflowCoreError(
-      "skill_format_invalid",
-      `Workflows directory not found at ${workflowsDir}`,
-      { path: workflowsDir },
-    );
-  }
+  const workflowsDir = resolveWorkflowDirectory(
+    root,
+    workflowsRel,
+    skillMdPath,
+  );
 
   const scriptInvariants = await loadSkillInvariants(root);
 
@@ -150,6 +147,58 @@ function readWorkflowDeclaration(
     );
   }
   return value;
+}
+
+function resolveWorkflowDirectory(
+  skillRoot: string,
+  workflowsRel: string,
+  skillMdPath: string,
+): string {
+  if (
+    isAbsolute(workflowsRel) ||
+    win32.isAbsolute(workflowsRel) ||
+    workflowsRel.split(/[\\/]+/u).includes("..")
+  ) {
+    throw workflowDirectoryConfinementError(skillMdPath, workflowsRel);
+  }
+
+  const workflowsDir = resolve(skillRoot, workflowsRel);
+  if (!isPathContainedBy(skillRoot, workflowsDir)) {
+    throw workflowDirectoryConfinementError(skillMdPath, workflowsRel);
+  }
+  if (!existsSync(workflowsDir) || !statSync(workflowsDir).isDirectory()) {
+    throw new WorkflowCoreError(
+      "skill_format_invalid",
+      `Workflows directory not found at ${workflowsDir}`,
+      { path: workflowsDir },
+    );
+  }
+
+  if (!isPathContainedBy(realpathSync(skillRoot), realpathSync(workflowsDir))) {
+    throw workflowDirectoryConfinementError(skillMdPath, workflowsRel);
+  }
+  return workflowsDir;
+}
+
+function isPathContainedBy(root: string, candidate: string): boolean {
+  const relativePath = relative(root, candidate);
+  return (
+    relativePath === "" ||
+    (relativePath !== ".." &&
+      !relativePath.startsWith(`..${sep}`) &&
+      !isAbsolute(relativePath))
+  );
+}
+
+function workflowDirectoryConfinementError(
+  path: string,
+  workflowsRel: string,
+): WorkflowCoreError {
+  return new WorkflowCoreError(
+    "skill_format_invalid",
+    "SKILL.md workflow directory must be a relative path contained within the skill",
+    { path, workflowsRel },
+  );
 }
 
 async function loadSkillInvariants(

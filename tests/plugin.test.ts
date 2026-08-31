@@ -1,4 +1,10 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -12,13 +18,29 @@ phases:
 transitions: []
 `;
 
-function createSkill(frontmatter: string): string {
-  const root = mkdtempSync(join(tmpdir(), "ix-flow-skill-"));
-  mkdirSync(join(root, "workflows", "example"), { recursive: true });
+const workflowDeclarations = [
+  { name: "standard", parent: "metadata", key: "ix-flow-workflows" },
+  { name: "legacy", parent: "contributes", key: "workflows" },
+];
+
+function workflowFrontmatter(
+  declaration: (typeof workflowDeclarations)[number],
+  value: string,
+): string {
+  return `name: example\ndescription: Example workflow.\n${declaration.parent}:\n  ${declaration.key}: ${JSON.stringify(value)}\n`;
+}
+
+function writeSkillFrontmatter(root: string, frontmatter: string): void {
   writeFileSync(
     join(root, "SKILL.md"),
     `---\n${frontmatter}---\n\n# Example\n`,
   );
+}
+
+function createSkill(frontmatter: string): string {
+  const root = mkdtempSync(join(tmpdir(), "ix-flow-skill-"));
+  mkdirSync(join(root, "workflows", "example"), { recursive: true });
+  writeSkillFrontmatter(root, frontmatter);
   writeFileSync(
     join(root, "workflows", "example", "def.yaml"),
     workflowDefinition,
@@ -151,4 +173,68 @@ describe("loadSkill workflow metadata", () => {
       rmSync(root, { recursive: true, force: true });
     }
   });
+
+  test.each(workflowDeclarations)(
+    "rejects an absolute path in a $name workflow declaration",
+    async (declaration) => {
+      const root = createSkill("");
+      writeSkillFrontmatter(
+        root,
+        workflowFrontmatter(declaration, join(root, "workflows")),
+      );
+
+      try {
+        await expect(loadSkill(root)).rejects.toMatchObject({
+          code: "skill_format_invalid",
+          message:
+            "SKILL.md workflow directory must be a relative path contained within the skill",
+        });
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    },
+  );
+
+  test.each(workflowDeclarations)(
+    "rejects parent traversal in a $name workflow declaration",
+    async (declaration) => {
+      const root = createSkill(
+        workflowFrontmatter(declaration, "workflows/../workflows"),
+      );
+
+      try {
+        await expect(loadSkill(root)).rejects.toMatchObject({
+          code: "skill_format_invalid",
+          message:
+            "SKILL.md workflow directory must be a relative path contained within the skill",
+        });
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    },
+  );
+
+  test.each(workflowDeclarations)(
+    "rejects a $name workflow directory symlink that resolves outside the skill",
+    async (declaration) => {
+      const root = createSkill(
+        workflowFrontmatter(declaration, "linked-workflows"),
+      );
+      const external = mkdtempSync(join(tmpdir(), "ix-flow-external-"));
+      mkdirSync(join(external, "example"));
+      writeFileSync(join(external, "example", "def.yaml"), workflowDefinition);
+      symlinkSync(external, join(root, "linked-workflows"), "dir");
+
+      try {
+        await expect(loadSkill(root)).rejects.toMatchObject({
+          code: "skill_format_invalid",
+          message:
+            "SKILL.md workflow directory must be a relative path contained within the skill",
+        });
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+        rmSync(external, { recursive: true, force: true });
+      }
+    },
+  );
 });

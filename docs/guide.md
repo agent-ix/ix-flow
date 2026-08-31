@@ -302,6 +302,9 @@ For compatibility with existing ix-flow skills, the legacy top-level
 `contributes.workflows` declaration is also accepted. If both forms are present, they must
 use the same relative-directory value.
 
+The workflow directory must stay within the skill: absolute paths, `..` path segments, and
+symbolic links that resolve outside the skill are rejected with `skill_format_invalid`.
+
 **3. Smoke-test it:**
 
 ```bash
