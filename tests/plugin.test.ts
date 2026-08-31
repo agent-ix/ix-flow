@@ -69,6 +69,59 @@ describe("loadSkill workflow metadata", () => {
     }
   });
 
+  test.each([
+    {
+      name: "null standard",
+      declaration: "metadata.ix-flow-workflows",
+      frontmatter:
+        "metadata:\n  ix-flow-workflows: null\ncontributes:\n  workflows: ./workflows\n",
+    },
+    {
+      name: "null legacy",
+      declaration: "contributes.workflows",
+      frontmatter:
+        "metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: null\n",
+    },
+    {
+      name: "empty standard",
+      declaration: "metadata.ix-flow-workflows",
+      frontmatter:
+        'metadata:\n  ix-flow-workflows: ""\ncontributes:\n  workflows: ./workflows\n',
+    },
+    {
+      name: "empty legacy",
+      declaration: "contributes.workflows",
+      frontmatter:
+        'metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: ""\n',
+    },
+    {
+      name: "non-string standard",
+      declaration: "metadata.ix-flow-workflows",
+      frontmatter:
+        "metadata:\n  ix-flow-workflows: [./workflows]\ncontributes:\n  workflows: ./workflows\n",
+    },
+    {
+      name: "non-string legacy",
+      declaration: "contributes.workflows",
+      frontmatter:
+        "metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: 42\n",
+    },
+  ])(
+    "rejects an explicitly malformed $name declaration even when the other form is valid",
+    async ({ declaration, frontmatter }) => {
+      const root = createSkill(frontmatter);
+
+      try {
+        await expect(loadSkill(root)).rejects.toMatchObject({
+          code: "skill_format_invalid",
+          message: `SKILL.md frontmatter declaration '${declaration}' must be a non-empty string`,
+        });
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
+    },
+  );
+
   test("rejects conflicting standard and legacy workflow declarations", async () => {
     const root = createSkill(
       "name: example\ndescription: Example workflow.\nmetadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: ./other-workflows\n",

@@ -17,8 +17,8 @@ export interface WorkflowPlugin {
 }
 
 interface SkillFrontmatter {
-  metadata?: { "ix-flow-workflows"?: string };
-  contributes?: { workflows?: string };
+  metadata?: unknown;
+  contributes?: unknown;
 }
 
 export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
@@ -42,13 +42,21 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
 
   const md = await readFile(skillMdPath, "utf8");
   const frontmatter = parseFrontmatter(md, skillMdPath);
-  const standardWorkflowsRel = frontmatter?.metadata?.["ix-flow-workflows"];
-  const legacyWorkflowsRel = frontmatter?.contributes?.workflows;
+  const standardWorkflowsRel = readWorkflowDeclaration(
+    frontmatter?.metadata,
+    "ix-flow-workflows",
+    "metadata.ix-flow-workflows",
+    skillMdPath,
+  );
+  const legacyWorkflowsRel = readWorkflowDeclaration(
+    frontmatter?.contributes,
+    "workflows",
+    "contributes.workflows",
+    skillMdPath,
+  );
   if (
-    typeof standardWorkflowsRel === "string" &&
-    standardWorkflowsRel.length > 0 &&
-    typeof legacyWorkflowsRel === "string" &&
-    legacyWorkflowsRel.length > 0 &&
+    standardWorkflowsRel !== undefined &&
+    legacyWorkflowsRel !== undefined &&
     standardWorkflowsRel !== legacyWorkflowsRel
   ) {
     throw new WorkflowCoreError(
@@ -57,11 +65,8 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
       { path: skillMdPath },
     );
   }
-  const workflowsRel =
-    typeof standardWorkflowsRel === "string" && standardWorkflowsRel.length > 0
-      ? standardWorkflowsRel
-      : legacyWorkflowsRel;
-  if (typeof workflowsRel !== "string" || workflowsRel.length === 0) {
+  const workflowsRel = standardWorkflowsRel ?? legacyWorkflowsRel;
+  if (workflowsRel === undefined) {
     throw new WorkflowCoreError(
       "skill_format_invalid",
       `SKILL.md frontmatter must declare 'metadata.ix-flow-workflows: <relative-dir>' or legacy 'contributes.workflows: <relative-dir>'`,
@@ -120,6 +125,31 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
   }
 
   return { workflows };
+}
+
+function readWorkflowDeclaration(
+  container: unknown,
+  key: string,
+  declaration: string,
+  path: string,
+): string | undefined {
+  if (
+    container === null ||
+    typeof container !== "object" ||
+    !Object.prototype.hasOwnProperty.call(container, key)
+  ) {
+    return undefined;
+  }
+
+  const value = (container as Record<string, unknown>)[key];
+  if (typeof value !== "string" || value.length === 0) {
+    throw new WorkflowCoreError(
+      "skill_format_invalid",
+      `SKILL.md frontmatter declaration '${declaration}' must be a non-empty string`,
+      { path },
+    );
+  }
+  return value;
 }
 
 async function loadSkillInvariants(
