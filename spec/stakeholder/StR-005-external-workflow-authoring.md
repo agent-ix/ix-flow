@@ -30,12 +30,11 @@ distribution path that fits them while leaving the engine untouched.
 
 ## Validation Criteria
 
-
-| ID | Criteria | Validation |
-|----|----------|------------|
+| ID           | Criteria                                                                                                               | Validation    |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------- | ------------- |
 | StR-005-VC-1 | An author outside the core team can create a workflow as a path-mode skill directory and as a name-mode published set. | Demonstration |
-| StR-005-VC-2 | Either can be executed by the runner. | Demonstration |
-| StR-005-VC-3 | Neither authoring nor execution requires modifying or forking the engine. | Demonstration |
+| StR-005-VC-2 | Either can be executed by the runner.                                                                                  | Demonstration |
+| StR-005-VC-3 | Neither authoring nor execution requires modifying or forking the engine.                                              | Demonstration |
 
 ## Stakeholders
 

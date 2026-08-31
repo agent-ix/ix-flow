@@ -30,12 +30,11 @@ keeps maintenance concentrated in one place.
 
 ## Validation Criteria
 
-
-| ID | Criteria | Validation |
-|----|----------|------------|
+| ID           | Criteria                                                                                                                   | Validation    |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | StR-001-VC-1 | A single authored workflow can be executed unchanged both from the standalone CLI and from the Claude Code plugin surface. | Demonstration |
-| StR-001-VC-2 | Both surfaces share one engine rather than separate forks. | Demonstration |
-| StR-001-VC-3 | Adopting the runner in either context requires no modification to the engine itself. | Demonstration |
+| StR-001-VC-2 | Both surfaces share one engine rather than separate forks.                                                                 | Demonstration |
+| StR-001-VC-3 | Adopting the runner in either context requires no modification to the engine itself.                                       | Demonstration |
 
 ## Stakeholders
 
