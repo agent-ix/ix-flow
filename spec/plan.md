@@ -8,9 +8,10 @@ type: Plan
 
 ## Tasks
 
-| ID       | Task                                                          | Status |
-| -------- | ------------------------------------------------------------- | ------ |
-| Task-001 | Scaffold TypeScript package with cookiecutter.                | Done   |
-| Task-002 | Add `ix-flow` binary and command parser.                      | Done   |
-| Task-003 | Delegate run lifecycle operations to `WorkflowCommandRunner`. | Done   |
-| Task-004 | Verify build, lint, tests, and CLI smoke checks.              | Done   |
+| ID       | Task                                                                         | Status |
+| -------- | ---------------------------------------------------------------------------- | ------ |
+| Task-001 | Scaffold TypeScript package with cookiecutter.                               | Done   |
+| Task-002 | Add `ix-flow` binary and command parser.                                     | Done   |
+| Task-003 | Delegate run lifecycle operations to `WorkflowCommandRunner`.                | Done   |
+| Task-004 | Verify build, lint, tests, and CLI smoke checks.                             | Done   |
+| Task-005 | Standardize skill workflow metadata with compatibility and path confinement. | Done   |

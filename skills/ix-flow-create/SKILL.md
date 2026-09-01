@@ -47,8 +47,8 @@ Create a new `ix-flow` workflow: a **flow** that declares the states and moves, 
    ---
    name: <name>
    description: <what this workflow does>
-   contributes:
-     workflows: ./workflows
+   metadata:
+     ix-flow-workflows: ./workflows
    ---
 
    # /<name>

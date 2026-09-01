@@ -29,11 +29,10 @@ has been altered or damaged, so they can trust or reject a run's history.
 
 ## Validation Criteria
 
-
-| ID | Criteria | Validation |
-|----|----------|------------|
-| StR-003-VC-1 | Run state is stored in a local directory by default. | Demonstration |
-| StR-003-VC-2 | The history of a run is recorded as an append-only event log. | Inspection |
+| ID           | Criteria                                                                                                             | Validation    |
+| ------------ | -------------------------------------------------------------------------------------------------------------------- | ------------- |
+| StR-003-VC-1 | Run state is stored in a local directory by default.                                                                 | Demonstration |
+| StR-003-VC-2 | The history of a run is recorded as an append-only event log.                                                        | Inspection    |
 | StR-003-VC-3 | A verification command reports a run as intact for an unmodified log and as corrupt for a log that has been altered. | Demonstration |
 
 ## Stakeholders

@@ -58,7 +58,7 @@ flowchart TB
         W["workflows/release/def.yaml — the flow"]
         I["scripts/invariants.js — optional custom checks"]
     end
-    S -.->|"contributes.workflows"| W
+    S -.->|"metadata.ix-flow-workflows"| W
 ```
 
 - **The flow** (`def.yaml`) declares the phases and the legal moves between them.
@@ -288,8 +288,8 @@ the agent's playbook:
 ---
 name: <name>
 description: What this workflow does.
-contributes:
-  workflows: ./workflows
+metadata:
+  ix-flow-workflows: ./workflows
 ---
 
 # /<name>
@@ -297,6 +297,15 @@ contributes:
 Start from `ix-flow status` and follow the reported next actions. Advance the run through
 its phases, recording progress as you go, and stop at human gates until they are approved.
 ```
+
+For compatibility with existing ix-flow skills, the legacy top-level
+`contributes.workflows` declaration is also accepted. If both forms are present, they must
+use the same relative-directory value.
+
+The workflow directory must stay within the skill: absolute paths, `..` path segments, and
+symbolic links that resolve outside the skill are rejected with `skill_format_invalid`.
+Each `workflows/<name>` directory and its `def.yaml` must likewise resolve within the
+declared workflow directory.
 
 **3. Smoke-test it:**
 

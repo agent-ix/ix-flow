@@ -30,11 +30,10 @@ from improvising past enforced controls.
 
 ## Validation Criteria
 
-
-| ID | Criteria | Validation |
-|----|----------|------------|
-| StR-002-VC-1 | Each workflow provides Markdown skills that orient an agent. | Demonstration |
-| StR-002-VC-2 | Those skills instruct the agent to read authoritative run status rather than rely on memory. | Demonstration |
+| ID           | Criteria                                                                                           | Validation    |
+| ------------ | -------------------------------------------------------------------------------------------------- | ------------- |
+| StR-002-VC-1 | Each workflow provides Markdown skills that orient an agent.                                       | Demonstration |
+| StR-002-VC-2 | Those skills instruct the agent to read authoritative run status rather than rely on memory.       | Demonstration |
 | StR-002-VC-3 | Phases, gates, and invariants are enforced by the engine independently of what the agent believes. | Demonstration |
 
 ## Stakeholders

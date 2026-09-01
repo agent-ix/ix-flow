@@ -26,7 +26,7 @@ evidence in the source, tests, or packaging. Test evidence cites files under `te
 | [FR-013](./functional/FR-013-event-log-and-integrity.md)    | Test         | `tests/commands.test.ts` (`verify` → chain intact), `src/workflow-core/event.ts`                        |
 | [FR-014](./functional/FR-014-workflow-definition-format.md) | Test         | `examples/*/workflows/*/def.yaml` load, `src/workflow-core/definition.ts`                               |
 | [FR-015](./functional/FR-015-invariants.md)                 | Test         | `tests/commands.test.ts` (built-ins), `tests/engine-features.test.ts` (custom + unregistered)           |
-| [FR-016](./functional/FR-016-skill-on-disk-format.md)       | Test         | `examples/release`, `examples/intake` (`--path` load), `src/workflow-core/plugin.ts`                    |
+| [FR-016](./functional/FR-016-skill-on-disk-format.md)       | Test         | `tests/plugin.test.ts` (metadata validation and confinement), examples (`--path` load)                  |
 | [FR-017](./functional/FR-017-resume-a-run.md)               | Test         | `tests/commands.test.ts` (resume re-emits status)                                                       |
 | [FR-018](./functional/FR-018-query-run-history.md)          | Test         | `tests/commands.test.ts` (history returns events)                                                       |
 | [FR-019](./functional/FR-019-update-a-workflow-item.md)     | Test         | `tests/commands.test.ts` (update-item patches by id)                                                    |
@@ -36,3 +36,20 @@ evidence in the source, tests, or packaging. Test evidence cites files under `te
 | [NFR-002](./nonfunctional/NFR-002-local-first.md)           | Inspection   | no network/service calls in local command paths                                                         |
 | [NFR-003](./nonfunctional/NFR-003-tamper-evident-state.md)  | Analysis     | `src/workflow-core/event.ts` (`verifyChain`), `tests/commands.test.ts`                                  |
 | [NFR-004](./nonfunctional/NFR-004-runner-positioning.md)    | Review       | command surface scoped to lifecycle + authoring; `README.md`, this spec                                 |
+
+## Functional Requirement Coverage
+
+| Functional Req | Acceptance Criteria                                                          | Test Cases                                     | Coverage Status |
+| -------------- | ---------------------------------------------------------------------------- | ---------------------------------------------- | --------------- |
+| FR-016         | FR-016-AC-1, FR-016-AC-2, FR-016-AC-3, FR-016-AC-4, FR-016-AC-5, FR-016-AC-6 | TC-001, TC-002, TC-003, TC-004, TC-005, TC-006 | ✅ Covered      |
+
+## Test Case Summary
+
+| Test ID | Title                                                            | Type | Priority | Traces To   | Status |
+| ------- | ---------------------------------------------------------------- | ---- | -------- | ----------- | ------ |
+| TC-001  | Load every definition from the declared workflow directory       | Unit | P0       | FR-016-AC-1 | ✅     |
+| TC-002  | Accept standard and legacy workflow metadata                     | Unit | P0       | FR-016-AC-2 | ✅     |
+| TC-003  | Accept matching dual declarations and reject conflicts           | Unit | P0       | FR-016-AC-3 | ✅     |
+| TC-004  | Diagnose missing workflow metadata with both supported forms     | Unit | P1       | FR-016-AC-4 | ✅     |
+| TC-005  | Reject every explicitly empty, null, or non-string declaration   | Unit | P0       | FR-016-AC-5 | ✅     |
+| TC-006  | Reject absolute, traversing, and symlink-escaping workflow paths | Unit | P0       | FR-016-AC-6 | ✅     |

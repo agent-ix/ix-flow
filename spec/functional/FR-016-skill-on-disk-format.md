@@ -13,10 +13,22 @@ relationships:
 
 ## Description
 
-A path-mode skill SHALL be a directory containing a `SKILL.md` whose
-frontmatter declares `contributes.workflows: <dir>`. That directory SHALL hold
-one `workflows/<name>/def.yaml` per workflow and MAY include a
-`scripts/invariants.js` (an ESM module exporting an `invariants` object).
+A path-mode skill SHALL be a directory containing a `SKILL.md` whose standard
+Agent/Codex frontmatter declares `metadata.ix-flow-workflows: <relative-dir>`.
+For backwards compatibility, ix-flow SHALL also accept the legacy top-level
+`contributes.workflows: <relative-dir>` declaration. Each declaration key that
+is present SHALL contain a non-empty string; an empty or malformed declaration
+SHALL fail with `skill_format_invalid` even when the other declaration is valid.
+If both declarations are valid and present, they SHALL use the same
+relative-directory value; conflicting declarations SHALL fail with
+`skill_format_invalid`. The value SHALL NOT be absolute or contain a parent
+traversal (`..`) segment, and its resolved real path SHALL remain within the
+skill directory; violations SHALL fail with `skill_format_invalid`. The declared
+directory SHALL hold one `workflows/<name>/def.yaml` per workflow and MAY include
+a `scripts/invariants.js` (an ESM module exporting an `invariants` object). Every
+discovered `workflows/<name>` directory and `def.yaml` real path SHALL remain
+within the resolved declared workflow directory; an escaping child or definition
+SHALL fail with `skill_format_invalid` before its content is read.
 
 Only `invariants.js` SHALL be supported as a skill script; any other script
 SHALL fail with `skill_script_unsupported`. A missing or invalid `SKILL.md`
@@ -31,12 +43,16 @@ workflow name; a multi-workflow skill referenced without a name SHALL fail with
 
 ## Acceptance Criteria
 
-| ID          | Criteria                                                                                   | Verification                  |
-| ----------- | ------------------------------------------------------------------------------------------ | ----------------------------- |
-| FR-016-AC-1 | `--path` loads every `workflows/<name>/def.yaml` in the skill                              | Test (tests/commands.test.ts) |
-| FR-016-AC-2 | Invalid `SKILL.md` frontmatter fails with `skill_format_invalid`                           | Analysis                      |
-| FR-016-AC-3 | Only `invariants.js` ESM is supported, else `skill_script_unsupported`                     | Analysis                      |
-| FR-016-AC-4 | A single-workflow skill resolves without a name; ambiguous fails with `workflow_ambiguous` | Analysis                      |
+| ID          | Criteria                                                                                                 | Verification                  |
+| ----------- | -------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| FR-016-AC-1 | `--path` loads every `workflows/<name>/def.yaml` in the skill                                            | Test (tests/commands.test.ts) |
+| FR-016-AC-2 | Standard `metadata.ix-flow-workflows` and legacy `contributes.workflows` declarations are each accepted  | Test (tests/plugin.test.ts)   |
+| FR-016-AC-3 | Matching dual declarations are accepted; conflicting dual declarations fail with `skill_format_invalid`  | Test (tests/plugin.test.ts)   |
+| FR-016-AC-4 | Missing workflow metadata fails with `skill_format_invalid` and a diagnostic naming both supported forms | Test (tests/plugin.test.ts)   |
+| FR-016-AC-5 | An explicit empty or malformed declaration fails even when the other declaration is valid                | Test (tests/plugin.test.ts)   |
+| FR-016-AC-6 | Absolute, traversing, or escaping declarations, child directories, and definitions fail closed           | Test (tests/plugin.test.ts)   |
+| FR-016-AC-7 | Only `invariants.js` ESM is supported, else `skill_script_unsupported`                                   | Analysis                      |
+| FR-016-AC-8 | A single-workflow skill resolves without a name; ambiguous fails with `workflow_ambiguous`               | Analysis                      |
 
 ## Dependencies
 
