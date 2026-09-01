@@ -23,6 +23,45 @@ const workflowDeclarations = [
   { name: "legacy", parent: "contributes", key: "workflows" },
 ];
 
+const malformedWorkflowDeclarations = [
+  {
+    name: "null standard",
+    declaration: "metadata.ix-flow-workflows",
+    frontmatter:
+      "metadata:\n  ix-flow-workflows: null\ncontributes:\n  workflows: ./workflows\n",
+  },
+  {
+    name: "null legacy",
+    declaration: "contributes.workflows",
+    frontmatter:
+      "metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: null\n",
+  },
+  {
+    name: "empty standard",
+    declaration: "metadata.ix-flow-workflows",
+    frontmatter:
+      'metadata:\n  ix-flow-workflows: ""\ncontributes:\n  workflows: ./workflows\n',
+  },
+  {
+    name: "empty legacy",
+    declaration: "contributes.workflows",
+    frontmatter:
+      'metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: ""\n',
+  },
+  {
+    name: "non-string standard",
+    declaration: "metadata.ix-flow-workflows",
+    frontmatter:
+      "metadata:\n  ix-flow-workflows: [./workflows]\ncontributes:\n  workflows: ./workflows\n",
+  },
+  {
+    name: "non-string legacy",
+    declaration: "contributes.workflows",
+    frontmatter:
+      "metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: 42\n",
+  },
+];
+
 function workflowFrontmatter(
   declaration: (typeof workflowDeclarations)[number],
   value: string,
@@ -49,6 +88,7 @@ function createSkill(frontmatter: string): string {
 }
 
 describe("loadSkill workflow metadata", () => {
+  // Trace: FR-016-AC-2, TC-002.
   test("loads standard Agent/Codex metadata", async () => {
     const root = createSkill(
       "name: example\ndescription: Example workflow.\nmetadata:\n  ix-flow-workflows: ./workflows\n",
@@ -63,6 +103,30 @@ describe("loadSkill workflow metadata", () => {
     }
   });
 
+  // Trace: FR-016-AC-1, TC-001.
+  test("loads every workflow definition in the declared directory", async () => {
+    const root = createSkill(
+      "name: example\ndescription: Example workflow.\nmetadata:\n  ix-flow-workflows: ./workflows\n",
+    );
+    mkdirSync(join(root, "workflows", "second"), { recursive: true });
+    writeFileSync(
+      join(root, "workflows", "second", "def.yaml"),
+      workflowDefinition.replace("name: example", "name: second"),
+    );
+
+    try {
+      const plugin = await loadSkill(root);
+
+      expect(plugin.workflows.map(({ def }) => def.name).sort()).toEqual([
+        "example",
+        "second",
+      ]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  // Trace: FR-016-AC-2, TC-002.
   test("continues to load legacy contributes.workflows metadata", async () => {
     const root = createSkill(
       "name: example\ndescription: Example workflow.\ncontributes:\n  workflows: ./workflows\n",
@@ -77,6 +141,7 @@ describe("loadSkill workflow metadata", () => {
     }
   });
 
+  // Trace: FR-016-AC-3, TC-003.
   test("accepts matching standard and legacy workflow declarations", async () => {
     const root = createSkill(
       "name: example\ndescription: Example workflow.\nmetadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: ./workflows\n",
@@ -91,44 +156,8 @@ describe("loadSkill workflow metadata", () => {
     }
   });
 
-  test.each([
-    {
-      name: "null standard",
-      declaration: "metadata.ix-flow-workflows",
-      frontmatter:
-        "metadata:\n  ix-flow-workflows: null\ncontributes:\n  workflows: ./workflows\n",
-    },
-    {
-      name: "null legacy",
-      declaration: "contributes.workflows",
-      frontmatter:
-        "metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: null\n",
-    },
-    {
-      name: "empty standard",
-      declaration: "metadata.ix-flow-workflows",
-      frontmatter:
-        'metadata:\n  ix-flow-workflows: ""\ncontributes:\n  workflows: ./workflows\n',
-    },
-    {
-      name: "empty legacy",
-      declaration: "contributes.workflows",
-      frontmatter:
-        'metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: ""\n',
-    },
-    {
-      name: "non-string standard",
-      declaration: "metadata.ix-flow-workflows",
-      frontmatter:
-        "metadata:\n  ix-flow-workflows: [./workflows]\ncontributes:\n  workflows: ./workflows\n",
-    },
-    {
-      name: "non-string legacy",
-      declaration: "contributes.workflows",
-      frontmatter:
-        "metadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: 42\n",
-    },
-  ])(
+  // Trace: FR-016-AC-5, TC-005.
+  test.each(malformedWorkflowDeclarations)(
     "rejects an explicitly malformed $name declaration even when the other form is valid",
     async ({ declaration, frontmatter }) => {
       const root = createSkill(frontmatter);
@@ -144,6 +173,7 @@ describe("loadSkill workflow metadata", () => {
     },
   );
 
+  // Trace: FR-016-AC-3, TC-003.
   test("rejects conflicting standard and legacy workflow declarations", async () => {
     const root = createSkill(
       "name: example\ndescription: Example workflow.\nmetadata:\n  ix-flow-workflows: ./workflows\ncontributes:\n  workflows: ./other-workflows\n",
@@ -160,6 +190,7 @@ describe("loadSkill workflow metadata", () => {
     }
   });
 
+  // Trace: FR-016-AC-4, TC-004.
   test("reports both supported declarations when workflow metadata is missing", async () => {
     const root = createSkill("name: example\ndescription: Example workflow.\n");
 
@@ -174,6 +205,7 @@ describe("loadSkill workflow metadata", () => {
     }
   });
 
+  // Trace: FR-016-AC-6, TC-006.
   test.each(workflowDeclarations)(
     "rejects an absolute path in a $name workflow declaration",
     async (declaration) => {
@@ -195,6 +227,7 @@ describe("loadSkill workflow metadata", () => {
     },
   );
 
+  // Trace: FR-016-AC-6, TC-006.
   test.each(workflowDeclarations)(
     "rejects parent traversal in a $name workflow declaration",
     async (declaration) => {
@@ -214,6 +247,7 @@ describe("loadSkill workflow metadata", () => {
     },
   );
 
+  // Trace: FR-016-AC-6, TC-006.
   test.each(
     workflowDeclarations.flatMap((declaration) => [
       {
@@ -249,6 +283,7 @@ describe("loadSkill workflow metadata", () => {
     },
   );
 
+  // Trace: FR-016-AC-6, TC-006.
   test.each(workflowDeclarations)(
     "rejects a $name workflow directory symlink that resolves outside the skill",
     async (declaration) => {
@@ -273,6 +308,7 @@ describe("loadSkill workflow metadata", () => {
     },
   );
 
+  // Trace: FR-016-AC-6, TC-006.
   test.each(workflowDeclarations)(
     "rejects a child workflow directory symlink escape with $name metadata",
     async (declaration) => {
@@ -298,6 +334,7 @@ describe("loadSkill workflow metadata", () => {
     },
   );
 
+  // Trace: FR-016-AC-6, TC-006.
   test.each(workflowDeclarations)(
     "rejects a workflow definition symlink escape with $name metadata",
     async (declaration) => {
