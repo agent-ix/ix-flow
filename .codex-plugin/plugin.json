@@ -2,9 +2,25 @@
   "name": "ix-flow",
   "version": "0.1.1",
   "description": "Run and author Agent IX workflows: a generic /ix-flow runner and an /ix-flow-create authoring skill.",
+  "author": {
+    "name": "Agent IX",
+    "url": "https://github.com/agent-ix"
+  },
+  "homepage": "https://github.com/agent-ix/ix-flow",
+  "repository": "https://github.com/agent-ix/ix-flow",
+  "license": "MIT",
+  "keywords": ["workflows", "agents", "state-machines", "planning"],
   "skills": "./skills/",
   "interface": {
     "displayName": "IX Flow",
-    "category": "Productivity"
+    "shortDescription": "Run and author stateful Agent IX workflows.",
+    "longDescription": "IX Flow adds skills for running gated agent workflows and authoring reusable workflow definitions.",
+    "developerName": "Agent IX",
+    "category": "Productivity",
+    "capabilities": ["Skills", "Workflows", "Planning", "Write"],
+    "defaultPrompt": [
+      "Run an IX Flow workflow.",
+      "Create a reusable agent workflow."
+    ]
   }
 }
