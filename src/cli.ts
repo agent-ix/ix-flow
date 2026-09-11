@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, resolve } from "node:path";
 
 import {
   configureRuntimeContext,
@@ -17,6 +16,7 @@ import {
   jsonEnvelope,
   type WorkflowResultEnvelope,
 } from "./workflow-runner/result.js";
+import { packageVersion } from "./version.js";
 
 interface ParsedArgs {
   command?: string;
@@ -224,16 +224,7 @@ export async function main(argv: string[]): Promise<void> {
   }
 }
 
-export function packageVersion(): string {
-  const packageRoot = dirname(dirname(fileURLToPath(import.meta.url)));
-  const packageJson = JSON.parse(
-    readFileSync(join(packageRoot, "package.json"), "utf8"),
-  ) as { version?: unknown };
-  if (typeof packageJson.version !== "string") {
-    throw new Error("package.json version is missing");
-  }
-  return packageJson.version;
-}
+export { packageVersion } from "./version.js";
 
 function parseArgs(argv: string[]): ParsedArgs {
   const flags: ParsedArgs["flags"] = {};
