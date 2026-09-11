@@ -547,7 +547,13 @@ export class WorkflowCommandRunner {
         workflow.def,
         current,
         input.to,
-        { invariants },
+        {
+          invariants,
+          invariantProviders: workflow.invariantProvider
+            ? [workflow.invariantProvider]
+            : [],
+          evaluatedAt: this.timestamp(),
+        },
       );
       const transitionKey = keyForTransition(transition);
       const gateMode =

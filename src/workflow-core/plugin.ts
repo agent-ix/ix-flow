@@ -5,11 +5,16 @@ import { pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { parseWorkflowDef, type PinnedWorkflowDef } from "./definition.js";
 import { WorkflowCoreError } from "./errors.js";
-import type { InvariantEvaluator } from "./transition.js";
+import { readExternalInvariantProvider } from "./external-invariant-provider.js";
+import type {
+  InvariantBatchProvider,
+  InvariantEvaluator,
+} from "./transition.js";
 
 export interface Workflow {
   def: PinnedWorkflowDef;
   invariants: Record<string, InvariantEvaluator>;
+  invariantProvider?: InvariantBatchProvider;
 }
 
 export interface WorkflowPlugin {
@@ -80,7 +85,15 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
     skillMdPath,
   );
 
-  const scriptInvariants = await loadSkillInvariants(root);
+  const invariantProvider = readExternalInvariantProvider(
+    frontmatter?.metadata,
+    root,
+    skillMdPath,
+  );
+  const scriptInvariants = await loadSkillInvariants(
+    root,
+    invariantProvider !== undefined,
+  );
 
   // Filter to directories, tolerating dangling symlinks and other entries
   // we can't stat. Every usable entry retains its validated canonical path so
@@ -129,7 +142,7 @@ export async function loadSkill(skillPath: string): Promise<WorkflowPlugin> {
         { path: defPath },
       );
     }
-    workflows.push({ def, invariants: scriptInvariants });
+    workflows.push({ def, invariants: scriptInvariants, invariantProvider });
   }
 
   return { workflows };
@@ -223,6 +236,7 @@ function workflowEntryConfinementError(path: string): WorkflowCoreError {
 
 async function loadSkillInvariants(
   skillRoot: string,
+  hasExternalProvider: boolean,
 ): Promise<Record<string, InvariantEvaluator>> {
   const scriptsDir = join(skillRoot, "scripts");
   if (!existsSync(scriptsDir) || !statSync(scriptsDir).isDirectory()) {
@@ -233,7 +247,7 @@ async function loadSkillInvariants(
     /^invariants\.[^.]+$/.test(entry),
   );
   const nonJs = invariantsFiles.filter((entry) => entry !== "invariants.js");
-  if (nonJs.length > 0) {
+  if (nonJs.length > 0 && !hasExternalProvider) {
     throw new WorkflowCoreError(
       "skill_script_unsupported",
       `Skill 'scripts/' contains unsupported invariant files: ${nonJs.join(", ")}. Only 'invariants.js' (ESM) is supported.`,
@@ -243,6 +257,14 @@ async function loadSkillInvariants(
 
   const invariantsPath = join(scriptsDir, "invariants.js");
   if (!existsSync(invariantsPath)) return {};
+  // Implements: FR-022-AC-3.
+  if (hasExternalProvider) {
+    throw new WorkflowCoreError(
+      "skill_invariant_provider_conflict",
+      "Skill declares both scripts/invariants.js and an external invariant provider.",
+      { path: invariantsPath },
+    );
+  }
 
   let mod: unknown;
   try {

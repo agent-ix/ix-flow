@@ -64,6 +64,8 @@ export {
   assertTransitionAllowed,
   findTransition,
   type InvariantContext,
+  type InvariantBatchContext,
+  type InvariantBatchProvider,
   type InvariantEvaluator,
   type InvariantResult,
   type TransitionOptions,

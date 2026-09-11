@@ -38,7 +38,7 @@ Create a new `ix-flow` workflow: a **flow** that declares the states and moves, 
    ```
 
    See `docs/guide.md` for the full field reference (gate modes, built-in invariants, custom
-   `scripts/invariants.js`).
+   `scripts/invariants.js`, and declared language-independent external invariant providers).
 
 3. **Write the skill** at `<name>/SKILL.md`. Frontmatter must declare the workflows dir; the
    body tells the agent how to run the flow:

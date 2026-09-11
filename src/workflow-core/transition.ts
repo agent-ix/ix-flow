@@ -3,6 +3,7 @@ import {
   TransitionInvariantError,
   TransitionInvariantUnregisteredError,
   TransitionNotFoundError,
+  WorkflowCoreError,
 } from "./errors.js";
 import type { WorkflowInstance } from "./instance.js";
 
@@ -33,8 +34,26 @@ export type InvariantResult =
   | { ok: false; code: string; details?: Record<string, unknown> };
 export type InvariantEvaluator = (context: InvariantContext) => InvariantResult;
 
+export interface InvariantBatchContext {
+  definition: WorkflowDef;
+  instance: WorkflowInstance;
+  transition: Transition;
+  invariants: Record<string, InvariantEvaluator>;
+  evaluatedAt: string;
+}
+
+export interface InvariantBatchProvider {
+  owns(reference: string): boolean;
+  evaluate(
+    context: InvariantBatchContext,
+    invariants: readonly string[],
+  ): ReadonlyMap<string, InvariantResult>;
+}
+
 export interface TransitionOptions {
   invariants?: Record<string, InvariantEvaluator>;
+  invariantProviders?: readonly InvariantBatchProvider[];
+  evaluatedAt?: string;
 }
 
 export interface TransitionResult {
@@ -58,19 +77,20 @@ export function assertTransitionAllowed(
   to: string,
   options: TransitionOptions = {},
 ): Transition {
+  // Implements: FR-022-AC-1, FR-022-AC-8.
   const transition = findTransition(definition, instance.phase, to);
   if (!transition) {
     throw new TransitionNotFoundError(instance.id, instance.phase, to);
   }
 
+  const providersByReference = new Map<string, InvariantBatchProvider>();
+  const batches = new Map<InvariantBatchProvider, string[]>();
   for (const invariant of transition.invariants) {
-    const colonIdx = invariant.indexOf(":");
-    const evaluatorName =
-      colonIdx >= 0 ? invariant.slice(0, colonIdx) : invariant;
-    const arg = colonIdx >= 0 ? invariant.slice(colonIdx + 1) : "";
-    const evaluator =
-      options.invariants?.[invariant] ?? options.invariants?.[evaluatorName];
-    if (!evaluator) {
+    if (resolveEvaluator(options.invariants, invariant)) continue;
+    const owners = (options.invariantProviders ?? []).filter((provider) =>
+      provider.owns(invariant),
+    );
+    if (owners.length === 0) {
       throw new TransitionInvariantUnregisteredError(
         instance.id,
         transition.from,
@@ -78,13 +98,69 @@ export function assertTransitionAllowed(
         invariant,
       );
     }
-    const result = evaluator({
-      definition,
-      instance,
-      transition,
-      arg,
-      invariants: options.invariants ?? {},
-    });
+    if (owners.length > 1) {
+      throw new WorkflowCoreError(
+        "invariant_provider_conflict",
+        `Invariant '${invariant}' is owned by multiple external providers.`,
+        { invariant },
+      );
+    }
+    const provider = owners[0];
+    providersByReference.set(invariant, provider);
+    const batch = batches.get(provider) ?? [];
+    if (!batch.includes(invariant)) batch.push(invariant);
+    batches.set(provider, batch);
+  }
+
+  const providerResults = new Map<
+    InvariantBatchProvider,
+    ReadonlyMap<string, InvariantResult>
+  >();
+
+  for (const invariant of transition.invariants) {
+    const colonIdx = invariant.indexOf(":");
+    const arg = colonIdx >= 0 ? invariant.slice(colonIdx + 1) : "";
+    const evaluator = resolveEvaluator(options.invariants, invariant);
+    let result: InvariantResult;
+    if (evaluator) {
+      result = evaluator({
+        definition,
+        instance,
+        transition,
+        arg,
+        invariants: options.invariants ?? {},
+      });
+    } else {
+      const provider = providersByReference.get(invariant)!;
+      let results = providerResults.get(provider);
+      if (!results) {
+        if (options.evaluatedAt === undefined) {
+          throw new WorkflowCoreError(
+            "invariant_provider_evaluation_instant_missing",
+            "External invariant evaluation requires an explicit evaluation instant.",
+          );
+        }
+        results = provider.evaluate(
+          {
+            definition,
+            instance,
+            transition,
+            invariants: options.invariants ?? {},
+            evaluatedAt: options.evaluatedAt,
+          },
+          batches.get(provider)!,
+        );
+        providerResults.set(provider, results);
+      }
+      result = results.get(invariant);
+      if (result === undefined) {
+        throw new WorkflowCoreError(
+          "invariant_provider_output_malformed",
+          `External invariant provider omitted '${invariant}'.`,
+          { invariant },
+        );
+      }
+    }
     const failure = invariantFailure(result);
     if (failure) {
       throw new TransitionInvariantError(
@@ -100,6 +176,16 @@ export function assertTransitionAllowed(
   }
 
   return transition;
+}
+
+function resolveEvaluator(
+  invariants: Record<string, InvariantEvaluator> | undefined,
+  reference: string,
+): InvariantEvaluator | undefined {
+  const colonIdx = reference.indexOf(":");
+  const evaluatorName =
+    colonIdx >= 0 ? reference.slice(0, colonIdx) : reference;
+  return invariants?.[reference] ?? invariants?.[evaluatorName];
 }
 
 export function advanceInstancePhase(

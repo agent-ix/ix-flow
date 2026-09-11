@@ -13,9 +13,12 @@ relationships:
 
 Transition `invariants` SHALL be names, optionally of the form `name:arg`
 (split on the first colon). Invariant resolution SHALL merge the core library
-with skill-provided invariants (`scripts/invariants.js`), with the skill
-overriding the core. The built-in invariants `acyclic`, `no_open_questions`,
-and `interview.complete` SHALL be available without any skill script.
+with skill-provided invariants (`scripts/invariants.js` or the external-provider
+boundary in [FR-022](./FR-022-external-invariant-providers.md)). Existing
+ordinary evaluator precedence SHALL remain core library over skill and
+caller-supplied evaluator over both. The built-in invariants `acyclic`,
+`no_open_questions`, and `interview.complete` SHALL be available without any
+skill provider.
 
 Referencing an unregistered invariant SHALL fail with
 `transition_invariant_unregistered`. Evaluators SHALL return structured results
@@ -35,3 +38,4 @@ Referencing an unregistered invariant SHALL fail with
 ## Dependencies
 
 - **Upstream**: [US-005](../usecase/US-005-author-a-workflow-as-a-skill.md) author a workflow as a skill
+- **Downstream**: [FR-022](./FR-022-external-invariant-providers.md) external invariant providers

@@ -49,6 +49,7 @@ okf_version: "0.1"
 - [FR-019: Update a workflow item](./functional/FR-019-update-a-workflow-item.md)
 - [FR-020: Link workflow items](./functional/FR-020-link-workflow-items.md)
 - [FR-021: Optimistic concurrency control](./functional/FR-021-optimistic-concurrency.md)
+- [FR-022: External invariant providers](./functional/FR-022-external-invariant-providers.md)
 - [NFR-001: Agent-readable, deterministic output](./nonfunctional/NFR-001-agent-readable-output.md)
 - [NFR-002: Local-first operation](./nonfunctional/NFR-002-local-first.md)
 - [NFR-003: Auditable, tamper-evident state](./nonfunctional/NFR-003-tamper-evident-state.md)
