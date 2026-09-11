@@ -43,23 +43,23 @@ evidence in the source, tests, or packaging. Test evidence cites files under `te
 | Functional Req | Acceptance Criteria                                                                                    | Test Cases                                                     | Coverage Status |
 | -------------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | --------------- |
 | FR-016         | FR-016-AC-1, FR-016-AC-2, FR-016-AC-3, FR-016-AC-4, FR-016-AC-5, FR-016-AC-6                           | TC-001, TC-002, TC-003, TC-004, TC-005, TC-006                 | ✅ Covered      |
-| FR-022         | FR-022-AC-1, FR-022-AC-2, FR-022-AC-3, FR-022-AC-4, FR-022-AC-5, FR-022-AC-6, FR-022-AC-7, FR-022-AC-8 | TC-007, TC-008, TC-009, TC-010, TC-011, TC-012, TC-013, TC-014 | 🚧 Planned      |
+| FR-022         | FR-022-AC-1, FR-022-AC-2, FR-022-AC-3, FR-022-AC-4, FR-022-AC-5, FR-022-AC-6, FR-022-AC-7, FR-022-AC-8 | TC-007, TC-008, TC-009, TC-010, TC-011, TC-012, TC-013, TC-014 | ✅ Covered      |
 
 ## Test Case Summary
 
-| Test ID | Title                                                                         | Type        | Priority | Traces To   | Status     |
-| ------- | ----------------------------------------------------------------------------- | ----------- | -------- | ----------- | ---------- |
-| TC-001  | Load every definition from the declared workflow directory                    | Unit        | P0       | FR-016-AC-1 | ✅         |
-| TC-002  | Accept standard and legacy workflow metadata                                  | Unit        | P0       | FR-016-AC-2 | ✅         |
-| TC-003  | Accept matching dual declarations and reject conflicts                        | Unit        | P0       | FR-016-AC-3 | ✅         |
-| TC-004  | Diagnose missing workflow metadata with both supported forms                  | Unit        | P1       | FR-016-AC-4 | ✅         |
-| TC-005  | Reject every explicitly empty, null, or non-string declaration                | Unit        | P0       | FR-016-AC-5 | ✅         |
-| TC-006  | Reject absolute, traversing, and symlink-escaping workflow paths              | Unit        | P0       | FR-016-AC-6 | ✅         |
-| TC-007  | Invoke one real external process for one ordered invariant batch              | Integration | P0       | FR-022-AC-1 | 🚧 Planned |
-| TC-008  | Enforce the request projection, evaluation instant, and result correspondence | Integration | P0       | FR-022-AC-2 | 🚧 Planned |
-| TC-009  | Preserve ESM behavior and refuse dual providers                               | Integration | P0       | FR-022-AC-3 | 🚧 Planned |
-| TC-010  | Reject malformed declarations and undeclared provider scripts                 | Unit        | P0       | FR-022-AC-4 | 🚧 Planned |
-| TC-011  | Distinguish process start, crash, exit, timeout, and overflow                 | Integration | P0       | FR-022-AC-5 | 🚧 Planned |
-| TC-012  | Distinguish malformed, mismatched, and unknown result data                    | Integration | P0       | FR-022-AC-6 | 🚧 Planned |
-| TC-013  | Pass command arguments literally without a shell                              | Integration | P0       | FR-022-AC-7 | 🚧 Planned |
-| TC-014  | Reject an unregistered invariant without launching the provider               | Integration | P0       | FR-022-AC-8 | 🚧 Planned |
+| Test ID | Title                                                                         | Type        | Priority | Traces To   | Status |
+| ------- | ----------------------------------------------------------------------------- | ----------- | -------- | ----------- | ------ |
+| TC-001  | Load every definition from the declared workflow directory                    | Unit        | P0       | FR-016-AC-1 | ✅     |
+| TC-002  | Accept standard and legacy workflow metadata                                  | Unit        | P0       | FR-016-AC-2 | ✅     |
+| TC-003  | Accept matching dual declarations and reject conflicts                        | Unit        | P0       | FR-016-AC-3 | ✅     |
+| TC-004  | Diagnose missing workflow metadata with both supported forms                  | Unit        | P1       | FR-016-AC-4 | ✅     |
+| TC-005  | Reject every explicitly empty, null, or non-string declaration                | Unit        | P0       | FR-016-AC-5 | ✅     |
+| TC-006  | Reject absolute, traversing, and symlink-escaping workflow paths              | Unit        | P0       | FR-016-AC-6 | ✅     |
+| TC-007  | Invoke one real external process for one ordered invariant batch              | Integration | P0       | FR-022-AC-1 | ✅     |
+| TC-008  | Enforce the request projection, evaluation instant, and result correspondence | Integration | P0       | FR-022-AC-2 | ✅     |
+| TC-009  | Preserve ESM behavior and refuse dual providers                               | Integration | P0       | FR-022-AC-3 | ✅     |
+| TC-010  | Reject malformed declarations and undeclared provider scripts                 | Unit        | P0       | FR-022-AC-4 | ✅     |
+| TC-011  | Distinguish process start, crash, exit, timeout, and overflow                 | Integration | P0       | FR-022-AC-5 | ✅     |
+| TC-012  | Distinguish malformed, mismatched, and unknown result data                    | Integration | P0       | FR-022-AC-6 | ✅     |
+| TC-013  | Pass command arguments literally without a shell                              | Integration | P0       | FR-022-AC-7 | ✅     |
+| TC-014  | Reject an unregistered invariant without launching the provider               | Integration | P0       | FR-022-AC-8 | ✅     |

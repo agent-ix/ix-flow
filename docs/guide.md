@@ -152,6 +152,27 @@ export const invariants = {
 Reference it by name (`invariants: ["has_report"]`). A failing custom invariant returns its
 `code` and `details`, so the agent knows exactly what to fix.
 
+To implement invariants in Rust, Python, Node, or another executable language, declare one
+external provider instead of `scripts/invariants.js`:
+
+```yaml
+metadata:
+  ix-flow-workflows: ./workflows
+  ix-flow-invariant-provider:
+    command: engineering-assurance
+    args: [workflow-invariants]
+    request-protocol: engineering-assurance.workflow-invariants/v1
+    result-protocol: engineering-assurance.workflow-invariants-result/v1
+    invariants:
+      - shared.observation_ready
+      - shared.terminal_gates
+```
+
+ix-flow sends every external invariant needed by a transition in one versioned JSON request.
+The provider returns one ordered outcome per requested name. Provider commands run without a
+shell, from the skill root, with a five-second deadline and 1 MiB bounds on each output
+stream. A skill must choose the ESM module or the external provider; declaring both fails.
+
 ## The run lifecycle
 
 Putting it together: you invoke the skill, the agent creates a run and advances it, and you
