@@ -1,6 +1,6 @@
 {
   "name": "ix-flow",
-  "version": "0.1.1",
+  "version": "0.2.4",
   "description": "Run and author Agent IX workflows: a generic /ix-flow runner and an /ix-flow-create authoring skill.",
   "author": {
     "name": "Agent IX",

@@ -1,7 +1,7 @@
 {
   "name": "@agent-ix/ix-flow",
   "description": "Agent workflow runner CLI for Agent IX.",
-  "version": "0.1.1",
+  "version": "0.2.4",
   "license": "MIT",
   "type": "module",
   "files": [

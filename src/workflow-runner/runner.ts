@@ -49,6 +49,7 @@ import {
   type WorkflowRegistry,
 } from "./registry.js";
 import type { WorkflowResultEnvelope } from "./result.js";
+import { packageVersion } from "../version.js";
 
 export interface WorkflowRunnerOptions {
   config?: Partial<WorkflowPluginConfig>;
@@ -1015,7 +1016,7 @@ export class WorkflowCommandRunner {
         open_gates: instance?.openGates ?? [],
         state_version: instance?.stateVersion ?? result.summary?.stateVersion,
         def_hash: instance?.defHash,
-        cli_version: "0.1.0",
+        cli_version: packageVersion(),
         next_actions: structuredNextActions(nextActions, instance),
         nextActions,
       };
