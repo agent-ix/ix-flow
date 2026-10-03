@@ -5,6 +5,7 @@
 # IX Flow
 
 [![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/6qsdhSPE)
+[![Agent IX Plugins](https://github.com/agent-ix/agent-plugins/raw/refs/heads/main/assets/agent-ix-plugins.svg)](https://github.com/agent-ix/agent-plugins)
 
 `ix-flow` runs agent workflows. A workflow is a small state machine — phases, transitions,
 and human gates — that your agent advances step by step, pausing for your approval where it
@@ -33,8 +34,8 @@ your existing agent subscription is used.
 Run these inside Claude Code (they add the `/ix-flow` and `/ix-flow-create` commands):
 
 ```text
-/plugin marketplace add agent-ix/ix-flow
-/plugin install ix-flow@ix-flow
+/plugin marketplace add agent-ix/agent-plugins
+/plugin install ix-flow@agent-ix-public
 ```
 
 </details>
@@ -43,8 +44,8 @@ Run these inside Claude Code (they add the `/ix-flow` and `/ix-flow-create` comm
 <summary><b>OpenAI Codex</b></summary>
 
 ```bash
-codex plugin marketplace add agent-ix/ix-flow
-codex plugin add ix-flow
+codex plugin marketplace add agent-ix/agent-plugins
+codex plugin add ix-flow@agent-ix-public
 ```
 
 Or browse and install ix-flow from the `/plugins` menu inside the Codex TUI.
@@ -204,11 +205,11 @@ node ../cli-agent-evals/bin/cli-evals.js run \
 Agent plugin setup for authoring/running evals from an agent:
 
 ```bash
-claude plugin marketplace add agent-ix/cli-agent-evals
-claude plugin install cli-agent-evals
+claude plugin marketplace add agent-ix/agent-plugins
+claude plugin install cli-agent-evals@agent-ix-public
 
-codex plugin marketplace add agent-ix/cli-agent-evals
-codex plugin add cli-agent-evals
+codex plugin marketplace add agent-ix/agent-plugins
+codex plugin add cli-agent-evals@agent-ix-public
 
 gh skill install agent-ix/cli-agent-evals --all --scope user --agent opencode
 gh skill install agent-ix/cli-agent-evals --all --scope user --agent github-copilot
@@ -230,3 +231,21 @@ export default defineSuite({
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
+
+The standalone marketplace remains available for existing installations. When
+switching an installed plugin, follow the [migration guide](https://github.com/agent-ix/agent-plugins/blob/main/docs/migration.md)
+to avoid loading the old and new identities together.
+
+## Related Agent IX plugins
+
+Browse the [Agent IX public marketplace](https://github.com/agent-ix/agent-plugins)
+for independently installable Claude Code and Codex plugins:
+
+- [Quoin](https://github.com/agent-ix/quoin) authors, reviews, and plans specifications.
+- [Quire CLI](https://github.com/agent-ix/quire-cli) explores, writes, validates, links, and traces Markdown artifacts.
+- [Engineering Assurance](https://github.com/agent-ix/engineering-assurance) prepares governed assurance decisions and evidence.
+- [IX Flow](https://github.com/agent-ix/ix-flow) runs and authors resumable agent workflows.
+- [CLI Agent Evals](https://github.com/agent-ix/cli-agent-evals) runs and authors coding-agent evaluation suites.
+
+Plugin installation adds agent skills. Install each tool's CLI and any required
+Quire modules separately, following its own installation instructions.
