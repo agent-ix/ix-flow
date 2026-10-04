@@ -5,6 +5,8 @@ description: Run an Agent IX workflow with ix-flow — create a run and drive it
 
 # Run a workflow
 
+If this plugin is not initialized or an Agent IX command fails, read [the ix-flow setup guide](https://github.com/agent-ix/ix-flow/blob/main/setup.md) for its prerequisites and local diagnosis.
+
 Drive an `ix-flow` workflow to completion. The user names a workflow (and may point at a
 skill directory); you create a run and advance it through its phases, stopping at human
 gates for their approval.
