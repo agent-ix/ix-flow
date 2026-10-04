@@ -14,6 +14,14 @@ Workflows are packaged as **skills**: a flow definition plus instructions that t
 agent how to run it. [`quoin`](https://github.com/agent-ix/quoin), for example, ships
 spec skills that drive `ix-flow` — you invoke the skill, and the agent does the rest.
 
+## Setup
+
+If this plugin is uninitialized or a command fails, follow the [plugin setup guide](setup.md) for its required CLIs, configuration, and local diagnosis.
+
+## Community help
+
+If the setup checks leave a reproducible Agent IX ix-flow bug that blocks progress, [join the Agent IX Discord](https://discord.gg/k8DVhuYBR2). Community help is a last resort for Agent IX product bugs, not a help desk for local credentials, machine setup, third party tools, or unrelated projects. See [setup.md](setup.md#community-help) for what to include.
+
 ## Install
 
 Install the CLI your agent calls:
@@ -33,8 +41,8 @@ your existing agent subscription is used.
 Run these inside Claude Code (they add the `/ix-flow` and `/ix-flow-create` commands):
 
 ```text
-/plugin marketplace add agent-ix/ix-flow
-/plugin install ix-flow@ix-flow
+/plugin marketplace add agent-ix/agent-plugins
+/plugin install ix-flow@agent-ix
 ```
 
 </details>
@@ -43,8 +51,8 @@ Run these inside Claude Code (they add the `/ix-flow` and `/ix-flow-create` comm
 <summary><b>OpenAI Codex</b></summary>
 
 ```bash
-codex plugin marketplace add agent-ix/ix-flow
-codex plugin add ix-flow
+codex plugin marketplace add agent-ix/agent-plugins
+codex plugin add ix-flow@agent-ix
 ```
 
 Or browse and install ix-flow from the `/plugins` menu inside the Codex TUI.
@@ -204,11 +212,11 @@ node ../cli-agent-evals/bin/cli-evals.js run \
 Agent plugin setup for authoring/running evals from an agent:
 
 ```bash
-claude plugin marketplace add agent-ix/cli-agent-evals
-claude plugin install cli-agent-evals
+claude plugin marketplace add agent-ix/agent-plugins
+claude plugin install cli-agent-evals@agent-ix
 
-codex plugin marketplace add agent-ix/cli-agent-evals
-codex plugin add cli-agent-evals
+codex plugin marketplace add agent-ix/agent-plugins
+codex plugin add cli-agent-evals@agent-ix
 
 gh skill install agent-ix/cli-agent-evals --all --scope user --agent opencode
 gh skill install agent-ix/cli-agent-evals --all --scope user --agent github-copilot

@@ -5,6 +5,8 @@ description: Author a new Agent IX workflow — scaffold a flow (def.yaml) and t
 
 # Author a workflow
 
+If this plugin is not initialized or an Agent IX command fails, read [the ix-flow setup guide](https://github.com/agent-ix/ix-flow/blob/main/setup.md) for its prerequisites and local diagnosis.
+
 Create a new `ix-flow` workflow: a **flow** that declares the states and moves, and a
 **skill** that tells the agent how to run it. They live together in a skill directory:
 
