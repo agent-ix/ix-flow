@@ -4,7 +4,7 @@
 
 # IX Flow
 
-[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/k8DVhuYBR2)
+[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?logo=discord&logoColor=white)](https://discord.gg/k8DVhuYBR2) [![IX Skills](https://github.com/agent-ix/agent-plugins/raw/refs/heads/main/assets/ix-skills.svg)](https://github.com/agent-ix/agent-plugins)
 
 `ix-flow` runs agent workflows. A workflow is a small state machine — phases, transitions,
 and human gates — that your agent advances step by step, pausing for your approval where it
