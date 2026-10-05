@@ -34,8 +34,7 @@ narrow windows may clip the line. Other mods' bands are preserved.
 
 ## Try the local build
 
-Requires Claude Code 2.1.287 or newer and an ix-flow CLI build that includes
-`progress`. From this repository:
+Requires Claude Code 2.1.287 or newer and ix-flow CLI 0.3.0 or newer. From this repository:
 
 ```sh
 make build
