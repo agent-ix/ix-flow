@@ -252,6 +252,26 @@ export class WorkflowCommandRunner {
     });
   }
 
+  /** Read-only phase graph and run history for progress displays. */
+  async progress(id: string) {
+    return this.wrap("progress", async () => {
+      const instance = await this.store.get(id);
+      const workflow = await this.resolveForInstance(instance);
+      return {
+        data: {
+          ...instance,
+          phases: workflow.def.phases,
+          transitions: workflow.def.transitions.map(({ from, to }) => ({
+            from,
+            to,
+          })),
+        },
+        events: [],
+        summary: summarizeInstance(instance),
+      };
+    });
+  }
+
   async addItem(
     input: AddItemInput,
   ): Promise<WorkflowResultEnvelope<WorkflowInstance>> {

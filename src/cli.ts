@@ -32,6 +32,7 @@ Usage:
   ix-flow run <flow> [--path <skill-dir>] [--id <id>] [--name <name>] [--target <ref>...]
                      [--gate-mode <auto|hitl|full-auto>] [--gate <from>-><to>=<mode>...]
   ix-flow status <run-id>
+  ix-flow progress <run-id>
   ix-flow resume <run-id>
   ix-flow advance <run-id> <phase>
   ix-flow ack <run-id> <token> [--reviewer <id>] [--kind <kind>] [--note <text>]
@@ -94,6 +95,12 @@ export async function main(argv: string[]): Promise<void> {
   });
 
   switch (parsed.command) {
+    case "progress": {
+      const [id] = parsed.positionals;
+      if (!id) throw usageError("progress requires <run-id>");
+      await emit(await runner.progress(id), parsed);
+      break;
+    }
     case "run": {
       const [flow] = parsed.positionals;
       if (!flow && !stringFlag(parsed, "path"))
