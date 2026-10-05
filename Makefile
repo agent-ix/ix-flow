@@ -222,3 +222,7 @@ help:
 	@echo "  make install            - Install dependencies"
 	@echo "  make version            - Show computed version"
 	@echo "  make info               - Show git info"
+
+.PHONY: typecheck-mod
+typecheck-mod:
+	pnpm run typecheck:mod

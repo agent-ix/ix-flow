@@ -4,8 +4,9 @@ import prettierPlugin from "eslint-plugin-prettier";
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
+  { ignores: ["hooks/types/**"] },
   {
-    files: ["src/**/*.{ts,js}", "tests/**/*.{ts,js}"],
+    files: ["src/**/*.{ts,js}", "tests/**/*.{ts,js}", "hooks/**/*.ts"],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {

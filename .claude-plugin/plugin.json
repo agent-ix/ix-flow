@@ -1,7 +1,7 @@
 {
   "name": "ix-flow",
-  "version": "0.2.5",
-  "description": "Run and author Agent IX workflows from Claude: a generic /ix-flow runner and an /ix-flow-create authoring skill.",
+  "version": "0.3.0",
+  "description": "Run and author Agent IX workflows, with an animated stage progress bar for Claude Code.",
   "author": {
     "name": "Agent IX"
   }

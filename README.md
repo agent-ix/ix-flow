@@ -161,6 +161,10 @@ persist, so the agent can resume one across sessions.
 
 ## Concepts
 
+Claude Code also includes an optional [animated workflow progress mod](docs/claude-mod.md).
+Use `/flow-status RUN_ID` for a one-line phase diagram with a colored dot moving
+along the active connector, approval waits, and terminal completion.
+
 - **Flow** — a workflow definition: phases, transitions, gates, invariants (`def.yaml`).
 - **Skill** — the agent's instructions for running a flow (`SKILL.md`).
 - **Run** — one live instance of a flow, identified by a run id.
