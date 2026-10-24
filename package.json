@@ -1,7 +1,7 @@
 {
   "name": "@agent-ix/ix-flow",
   "description": "Agent workflow runner CLI for Agent IX.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "MIT",
   "type": "module",
   "files": [
@@ -54,7 +54,7 @@
   "dependencies": {
     "@agent-ix/ix-cli-core": "^0.12.0",
     "yaml": "^2.9.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "25.9.1",
