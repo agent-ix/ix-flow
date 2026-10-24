@@ -18,7 +18,7 @@ non-empty `request-protocol`, a non-empty `result-protocol`, and a non-empty,
 duplicate-free `invariants` array of non-empty names. ix-flow SHALL pass the
 command and argument vector to the platform process launcher while preserving
 each argument literally. ix-flow SHALL NOT interpret declaration arguments as
-shell expressions. On Windows, npm-generated `.cmd` launchers SHALL be supported
+shell expressions. ix-flow SHALL support Windows npm-generated `.cmd` launchers
 with platform-aware command and argument escaping. ix-flow SHALL resolve a command containing no
 path separator through `PATH`, use an absolute command as declared, and resolve
 a relative command containing a path separator from the skill root. ix-flow SHALL

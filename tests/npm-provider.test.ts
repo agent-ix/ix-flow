@@ -16,9 +16,14 @@ const fixture = fileURLToPath(
 );
 
 // Trace: FR-022-AC-1, FR-022-AC-5, TC-007.
-test.each(["absolute", "path"])(
-  "executes an npm-installed provider through an %s command",
-  async (kind) => {
+test.each([
+  ["local", "absolute"],
+  ["local", "path"],
+  ["global", "absolute"],
+  ["global", "path"],
+])(
+  "executes a %s npm-installed provider through a %s command",
+  async (scope, kind) => {
     const work = mkdtempSync(join(tmpdir(), "ix-flow-npm-provider-"));
     const previousPath = process.env.PATH;
     try {
@@ -47,6 +52,7 @@ test.each(["absolute", "path"])(
         "npm",
         [
           "install",
+          ...(scope === "global" ? ["--global"] : []),
           "--prefix",
           prefix,
           "--ignore-scripts",
@@ -66,7 +72,12 @@ test.each(["absolute", "path"])(
         },
       );
       expect(installed.status, installed.stderr).toBe(0);
-      const bin = join(prefix, "node_modules", ".bin");
+      const bin =
+        scope === "global"
+          ? process.platform === "win32"
+            ? prefix
+            : join(prefix, "bin")
+          : join(prefix, "node_modules", ".bin");
       process.env.PATH = [bin, previousPath].filter(Boolean).join(delimiter);
       const command =
         kind === "path"
