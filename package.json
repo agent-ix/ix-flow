@@ -1,7 +1,7 @@
 {
   "name": "@agent-ix/ix-flow",
   "description": "Agent workflow runner CLI for Agent IX.",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "license": "MIT",
   "type": "module",
   "files": [
@@ -19,7 +19,7 @@
   "packageManager": "pnpm@10.33.4",
   "scripts": {
     "help": "node scripts/help.js",
-    "test": "vitest run",
+    "test": "pnpm run build && vitest run",
     "test:coverage": "vitest run --coverage",
     "test:json": "vitest run --reporter=json --outputFile=report.json || true",
     "typecheck:mod": "tsc -p tsconfig.mod.json",
@@ -34,7 +34,7 @@
     "info": "node scripts/build-tools.js info",
     "docker:build": "docker build -t ghcr.io/agent-ix/ix-flow .",
     "publish:dry-run": "pnpm publish --dry-run",
-    "prepublishOnly": "pnpm run build",
+    "prepublishOnly": "pnpm run test",
     "tags": "npm dist-tag ls @agent-ix/ix-flow --registry https://npm.pkg.github.com || echo '(package not found or registry unavailable)'",
     "pkg:add": "pnpm add",
     "pkg:add-dev": "pnpm add -D",

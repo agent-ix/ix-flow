@@ -13,6 +13,7 @@ const external = [
   "@oclif/core",
   "age-encryption",
   "react",
+  "cross-spawn",
   "yaml",
   "zod",
 ];
