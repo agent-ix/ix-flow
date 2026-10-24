@@ -1,6 +1,6 @@
 {
   "name": "ix-flow",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Run and author Agent IX workflows, with an animated stage progress bar for Claude Code.",
   "author": {
     "name": "Agent IX"

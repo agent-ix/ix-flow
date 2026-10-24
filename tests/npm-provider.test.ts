@@ -9,7 +9,8 @@ import {
 import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { WorkflowCommandRunner } from "../src/workflow-runner/runner";
+
+const cli = fileURLToPath(new URL("../bin/ix-flow.js", import.meta.url));
 
 const fixture = fileURLToPath(
   new URL("./fixtures/external-invariant-provider.mjs", import.meta.url),
@@ -96,19 +97,30 @@ test.each([
         join(skill, "workflows", "npm", "def.yaml"),
         "name: npm\nversion: 1.0.0\ninitialPhase: open\nphases:\n  - {name: open}\n  - {name: closed, terminal: true}\ntransitions:\n  - {from: open, to: closed, invariants: [external.pass], defaultGate: auto}\n",
       );
-      const runner = new WorkflowCommandRunner({
-        cwd: work,
-        config: { stateDir: join(work, "state") },
-      });
-      const created = await runner.create({
-        definitionName: "npm",
-        skillPath: skill,
-      });
+      const run = (...args: string[]): Record<string, unknown> => {
+        const result = spawn.sync(
+          process.execPath,
+          [
+            cli,
+            ...args,
+            "--state-dir",
+            join(work, "state"),
+            "--config-root",
+            join(work, "config"),
+            "--json",
+          ],
+          {
+            cwd: work,
+            encoding: "utf8",
+            timeout: 15_000,
+          },
+        );
+        expect(result.status, result.stderr).toBe(0);
+        return JSON.parse(result.stdout);
+      };
+      const created = run("run", "npm", "--path", skill);
       expect(created.ok).toBe(true);
-      const result = await runner.advance({
-        id: created.instance_id!,
-        to: "closed",
-      });
+      const result = run("advance", String(created.instance_id), "closed");
       expect(result, JSON.stringify(result)).toMatchObject({
         ok: true,
         current_phase: "closed",
