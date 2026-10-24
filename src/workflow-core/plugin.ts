@@ -311,7 +311,9 @@ function parseFrontmatter(
   if (!md.startsWith("---")) return undefined;
   const end = md.indexOf("\n---", 3);
   if (end < 0) return undefined;
-  const yamlText = md.slice(3, end).replace(/^\r?\n/, "");
+  // Preserve the delimiter's preceding line break: slicing before LF leaves
+  // an orphan CR in CRLF files, which YAML includes in the final plain scalar.
+  const yamlText = md.slice(3, end + 1).replace(/^\r?\n/, "");
   let parsed: unknown;
   try {
     parsed = parseYaml(yamlText);

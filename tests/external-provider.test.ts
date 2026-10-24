@@ -355,3 +355,42 @@ test("resolves a relative provider command from the skill root", async () => {
     rmSync(harness.work, { recursive: true, force: true });
   }
 });
+
+// Trace: FR-022-AC-1, FR-022-AC-4, TC-007.
+test.each(["\n", "\r\n"])(
+  "loads and executes every block-list provider name with line ending %j",
+  async (lineEnding) => {
+    const harness = createHarness({
+      invariants: ["external.pass:first", "external.last"],
+      providerNames: ["external.pass", "external.last"],
+    });
+    try {
+      const skillPath = join(harness.skill, "SKILL.md");
+      const source = readFileSync(skillPath, "utf8")
+        .replace(
+          '    invariants: ["external.pass","external.last"]',
+          "    invariants:\n      - external.pass\n      - external.last",
+        )
+        .replaceAll("\n", lineEnding);
+      writeFileSync(skillPath, source);
+      const plugin = await loadSkill(harness.skill);
+      expect(plugin.workflows[0].invariantProvider?.owns("external.last")).toBe(
+        true,
+      );
+      expect(
+        plugin.workflows[0].invariantProvider?.owns("external.last\r"),
+      ).toBe(false);
+      const id = await createRun(harness);
+      const result = await harness.runner.advance({ id, to: "closed" });
+      expect(result).toMatchObject({ ok: true, current_phase: "closed" });
+      expect(invocationCount(harness)).toBe(1);
+      expect(
+        JSON.parse(readFileSync(harness.requestPath, "utf8")),
+      ).toMatchObject({
+        invariants: ["external.pass:first", "external.last"],
+      });
+    } finally {
+      rmSync(harness.work, { recursive: true, force: true });
+    }
+  },
+);

@@ -1,6 +1,7 @@
 import {
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   symlinkSync,
   writeFileSync,
@@ -358,3 +359,24 @@ describe("loadSkill workflow metadata", () => {
     },
   );
 });
+
+// Trace: FR-016-AC-2, TC-002.
+test.each(["\n", "\r\n"])(
+  "preserves the final unquoted workflow directory with line ending %j",
+  async (lineEnding) => {
+    const root = createSkill(
+      "name: example\nmetadata:\n  ix-flow-workflows: ./workflows\n",
+    );
+    try {
+      const path = join(root, "SKILL.md");
+      writeFileSync(
+        path,
+        readFileSync(path, "utf8").replaceAll("\n", lineEnding),
+      );
+      const plugin = await loadSkill(root);
+      expect(plugin.workflows.map(({ def }) => def.name)).toEqual(["example"]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  },
+);
