@@ -16,8 +16,10 @@ provider in `SKILL.md` under `metadata.ix-flow-invariant-provider`. The
 declaration SHALL contain a non-empty `command`, an `args` array of strings, a
 non-empty `request-protocol`, a non-empty `result-protocol`, and a non-empty,
 duplicate-free `invariants` array of non-empty names. ix-flow SHALL pass the
-command and argument vector directly to the operating-system process API with
-shell interpretation disabled. ix-flow SHALL resolve a command containing no
+command and argument vector to the platform process launcher while preserving
+each argument literally. ix-flow SHALL NOT interpret declaration arguments as
+shell expressions. ix-flow SHALL support Windows npm-generated `.cmd` launchers
+with platform-aware command and argument escaping. ix-flow SHALL resolve a command containing no
 path separator through `PATH`, use an absolute command as declared, and resolve
 a relative command containing a path separator from the skill root. ix-flow SHALL
 set the provider process working directory to the skill root.
@@ -78,7 +80,7 @@ invariant-refusal result.
 | FR-022-AC-4 | Invalid declarations and undeclared non-JavaScript `invariants.*` files fail closed with typed format or unsupported-script errors                                     | Test (tests/external-provider.test.ts) |
 | FR-022-AC-5 | Spawn failure, signal crash, non-zero exit, timeout, and output overflow produce their distinct stable provider-boundary codes                                         | Test (tests/external-provider.test.ts) |
 | FR-022-AC-6 | Malformed/incomplete output, result-protocol mismatch, and unrequested outcome names produce their distinct stable provider-boundary codes                             | Test (tests/external-provider.test.ts) |
-| FR-022-AC-7 | The provider command receives literal arguments without shell interpretation                                                                                           | Test (tests/external-provider.test.ts) |
+| FR-022-AC-7 | The provider command receives literal arguments, including through Windows npm launchers                                                                               | Test (tests/external-provider.test.ts) |
 | FR-022-AC-8 | An unregistered transition invariant retains `transition_invariant_unregistered` and does not launch the external provider                                             | Test (tests/external-provider.test.ts) |
 
 ## Dependencies

@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import spawn from "cross-spawn";
 import { isAbsolute, resolve, win32 } from "node:path";
 import { z } from "zod";
 
@@ -148,7 +148,7 @@ class ProcessInvariantProvider implements InvariantBatchProvider {
       evaluated_at: context.evaluatedAt,
     });
 
-    const execution = spawnSync(command, this.declaration.args, {
+    const execution = spawn.sync(command, this.declaration.args, {
       cwd: this.skillRoot,
       input: `${request}\n`,
       shell: false,
