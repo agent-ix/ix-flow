@@ -1,7 +1,7 @@
 {
   "name": "@agent-ix/ix-flow",
   "description": "Agent workflow runner CLI for Agent IX.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "type": "module",
   "files": [
@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@agent-ix/ix-cli-core": "^0.12.0",
+    "cross-spawn": "^7.0.6",
     "yaml": "^2.9.0",
     "zod": "^4.6.7"
   },
@@ -63,7 +64,6 @@
     "@typescript-eslint/parser": "8.60.1",
     "@vitest/coverage-v8": "4.1.8",
     "add": "^2.0.6",
-    "cross-spawn": "^7.0.6",
     "eslint": "10.4.1",
     "eslint-plugin-prettier": "5.5.6",
     "pnpm": "10.33.4",

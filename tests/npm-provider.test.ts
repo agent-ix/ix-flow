@@ -98,7 +98,10 @@ test.each(["absolute", "path"])(
         id: created.instance_id!,
         to: "closed",
       });
-      expect(result).toMatchObject({ ok: true, current_phase: "closed" });
+      expect(result, JSON.stringify(result)).toMatchObject({
+        ok: true,
+        current_phase: "closed",
+      });
       expect(readFileSync(counter, "utf8")).toBe("invoked\n");
       expect(JSON.parse(readFileSync(`${request}.args`, "utf8"))).toEqual([
         "two words",
