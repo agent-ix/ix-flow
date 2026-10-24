@@ -9,3 +9,6 @@ jobs:
     with:
       npm_registry: https://registry.npmjs.org
       trusted_publish: true
+
+  windows-providers:
+    uses: ./.github/workflows/windows-providers.yml
