@@ -3,6 +3,7 @@ import { isAbsolute, resolve, win32 } from "node:path";
 import { z } from "zod";
 
 import { WorkflowCoreError } from "./errors.js";
+import { transitionKey } from "./transition.js";
 import type {
   InvariantBatchContext,
   InvariantBatchProvider,
@@ -144,6 +145,12 @@ class ProcessInvariantProvider implements InvariantBatchProvider {
         defName: context.instance.defName,
         items: context.instance.items,
         gateConfig: context.instance.gateConfig,
+      },
+      run: {
+        instance_id: context.instance.id,
+        state_version: context.instance.stateVersion,
+        state: context.instance.phase,
+        transition_key: transitionKey(context.transition),
       },
       evaluated_at: context.evaluatedAt,
     });

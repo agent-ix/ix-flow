@@ -11,8 +11,10 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { trace } from "@agent-ix/ix-trace-ts/vitest";
 import { loadSkill } from "../src/workflow-core/plugin";
-import { WorkflowCommandRunner } from "../src/workflow-runner/runner";
+import { parseWorkflowDef } from "../src/workflow-core/definition.js";
+import { WorkflowCommandRunner } from "../src/host.js";
 
 const fixture = fileURLToPath(
   new URL("./fixtures/external-invariant-provider.mjs", import.meta.url),
@@ -21,6 +23,7 @@ const fixedNow = new Date("2026-09-10T20:00:00.000Z");
 
 interface SkillOptions {
   invariants?: string[];
+  systemOwnedItemTypes?: string[];
   providerNames?: string[];
   mode?: string;
   command?: string;
@@ -90,7 +93,7 @@ initialPhase: open
 phases:
   - { name: open }
   - { name: closed, terminal: true }
-transitions:
+${options.systemOwnedItemTypes ? `systemOwnedItemTypes: ${JSON.stringify(options.systemOwnedItemTypes)}\nitemSchemas:\n${options.systemOwnedItemTypes.map((type) => `  ${type}: {}\n`).join("")}` : ""}transitions:
   - from: open
     to: closed
     invariants: ${JSON.stringify(transitionInvariants)}
@@ -128,6 +131,45 @@ function invocationCount(harness: Harness): number {
   return readFileSync(harness.counterPath, "utf8").split("\n").filter(Boolean)
     .length;
 }
+
+test.each([
+  {
+    systemOwnedItemTypes: ["context", "context"],
+    itemSchemas: { context: {} },
+    message: "system_owned_item_type_duplicate",
+  },
+  {
+    systemOwnedItemTypes: ["context"],
+    itemSchemas: {},
+    message: "system_owned_item_type_unknown: context",
+  },
+])(
+  "rejects invalid system-owned item declarations ($message)",
+  ({ systemOwnedItemTypes, itemSchemas, message }) => {
+    trace("FR-014-AC-5");
+    expect(() =>
+      parseWorkflowDef({
+        name: "example",
+        version: "1.0.0",
+        initialPhase: "open",
+        phases: [{ name: "open" }],
+        systemOwnedItemTypes,
+        itemSchemas,
+      }),
+    ).toThrow(message);
+  },
+);
+
+test("keeps the system-owned item declaration absent from legacy definitions", () => {
+  const definition = parseWorkflowDef({
+    name: "example",
+    version: "1.0.0",
+    initialPhase: "open",
+    phases: [{ name: "open" }],
+  });
+
+  expect(definition).not.toHaveProperty("systemOwnedItemTypes");
+});
 
 async function expectProviderBoundaryError(
   options: SkillOptions,
@@ -209,8 +251,114 @@ test("sends the closed instance projection and runner evaluation instant", async
         items: {},
         gateConfig: { "open->closed": "auto" },
       },
+      run: {
+        instance_id: id,
+        state_version: 0,
+        state: "open",
+        transition_key: "open->closed",
+      },
       evaluated_at: fixedNow.toISOString(),
     });
+  } finally {
+    rmSync(harness.work, { recursive: true, force: true });
+  }
+});
+
+test("keeps run provenance engine-owned and protects system-owned items", async () => {
+  trace("FR-019-AC-3", "FR-022-AC-9", "FR-022-AC-11");
+  const harness = createHarness({
+    invariants: ["external.pass"],
+    systemOwnedItemTypes: ["quoin_context"],
+  });
+  try {
+    const id = await createRun(harness);
+    expect(
+      await harness.runner.addItem({
+        id,
+        type: "quoin_context",
+        item: { id: "attacker-context", config_root: "/attacker/config" },
+      }),
+    ).toMatchObject({ ok: false, error: { code: "item_system_owned" } });
+    expect(
+      await harness.runner.seedSystemOwnedItem({
+        id,
+        type: "quoin_context",
+        item: { id: "untrusted-seed", config_root: "/attacker/config" },
+      }),
+    ).toMatchObject({
+      ok: false,
+      error: { code: "system_owned_item_host_required" },
+    });
+
+    const hostRunner = new WorkflowCommandRunner({
+      cwd: harness.work,
+      config: { stateDir: harness.stateDir },
+      actor: { kind: "service", id: "quoin-host" },
+      now: () => fixedNow,
+      idFactory: () => "fixed",
+    });
+    const seeded = await hostRunner.seedSystemOwnedItem({
+      id,
+      type: "quoin_context",
+      item: { id: "context", config_root: "/trusted/config" },
+    });
+    expect(seeded.ok).toBe(true);
+
+    expect(
+      await harness.runner.updateItem({
+        id,
+        type: "quoin_context",
+        itemId: "context",
+        patch: { config_root: "/attacker/config" },
+      }),
+    ).toMatchObject({ ok: false, error: { code: "item_system_owned" } });
+    expect(
+      await harness.runner.addItem({
+        id,
+        type: "quoin_context",
+        item: { id: "replacement", config_root: "/attacker/config" },
+      }),
+    ).toMatchObject({ ok: false, error: { code: "item_system_owned" } });
+
+    const ordinary = await harness.runner.addItem({
+      id,
+      type: "notes",
+      item: {
+        id: "note",
+        run: { instance_id: "forged", state_version: 0 },
+        evaluator_results: ["allow"],
+      },
+    });
+    expect(ordinary.ok).toBe(true);
+    expect(
+      await harness.runner.updateItem({
+        id,
+        type: "notes",
+        itemId: "note",
+        patch: {
+          run: { instance_id: "forged-again" },
+          evaluator_results: ["allow", "allow"],
+        },
+      }),
+    ).toMatchObject({ ok: true });
+
+    const advanced = await harness.runner.advance({ id, to: "closed" });
+    expect(advanced.ok).toBe(true);
+    expect(invocationCount(harness)).toBe(1);
+    const request = JSON.parse(readFileSync(harness.requestPath, "utf8"));
+    expect(request.run).toEqual({
+      instance_id: id,
+      state_version: 3,
+      state: "open",
+      transition_key: "open->closed",
+    });
+    expect(request.instance.items.notes[0]).toMatchObject({
+      run: { instance_id: "forged-again" },
+      evaluator_results: ["allow", "allow"],
+    });
+    expect(request.instance.items.quoin_context[0].config_root).toBe(
+      "/trusted/config",
+    );
   } finally {
     rmSync(harness.work, { recursive: true, force: true });
   }

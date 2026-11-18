@@ -13,6 +13,7 @@ import {
   loadSkill,
   renderTemplate,
   summarizeInstance,
+  transitionKey,
   validateAnswers,
   verifyChain,
   type Actor,
@@ -275,69 +276,140 @@ export class WorkflowCommandRunner {
   async addItem(
     input: AddItemInput,
   ): Promise<WorkflowResultEnvelope<WorkflowInstance>> {
-    return this.mutate("add-item", input.id, (current) => {
-      const item = assertJsonObject(input.item, "item");
-      const itemId = item.id;
-      if (typeof itemId !== "string" || itemId.length === 0) {
-        throw new WorkflowCoreError(
-          "item_id_required",
-          "Workflow item must include a non-empty string id.",
-          { id: input.id, type: input.type },
-        );
-      }
-      const existing = current.items[input.type] ?? [];
-      if (existing.some((candidate) => itemIdOf(candidate) === itemId)) {
-        throw new WorkflowCoreError(
-          "item_already_exists",
-          `Workflow item '${itemId}' already exists in '${input.type}'.`,
-          { id: input.id, type: input.type, itemId },
-        );
-      }
-      return {
-        state: {
-          ...current,
-          items: {
-            ...current.items,
-            [input.type]: [...existing, input.item],
+    return this.mutate(
+      "add-item",
+      input.id,
+      (current, workflow) => {
+        if (workflow?.def.systemOwnedItemTypes?.includes(input.type)) {
+          throw systemOwnedItemError(input.id, input.type);
+        }
+        const existing = current.items[input.type] ?? [];
+        const item = assertJsonObject(input.item, "item");
+        const itemId = item.id;
+        if (typeof itemId !== "string" || itemId.length === 0) {
+          throw new WorkflowCoreError(
+            "item_id_required",
+            "Workflow item must include a non-empty string id.",
+            { id: input.id, type: input.type },
+          );
+        }
+        if (existing.some((candidate) => itemIdOf(candidate) === itemId)) {
+          throw new WorkflowCoreError(
+            "item_already_exists",
+            `Workflow item '${itemId}' already exists in '${input.type}'.`,
+            { id: input.id, type: input.type, itemId },
+          );
+        }
+        return {
+          state: {
+            ...current,
+            items: {
+              ...current.items,
+              [input.type]: [...existing, input.item],
+            },
           },
-        },
-        eventKind: "item.added",
-        payload: { type: input.type, itemId },
-      };
-    });
+          eventKind: "item.added",
+          payload: { type: input.type, itemId },
+        };
+      },
+      true,
+    );
+  }
+
+  /**
+   * Seed one declared system-owned item from a trusted host runner. The host
+   * must construct this runner with a `service` actor; agent-facing add-item
+   * and recipe operations cannot initialize protected context.
+   */
+  async seedSystemOwnedItem(
+    input: AddItemInput,
+  ): Promise<WorkflowResultEnvelope<WorkflowInstance>> {
+    return this.mutate(
+      "seed-system-owned-item",
+      input.id,
+      (current, workflow) => {
+        if (this.actor.kind !== "service") {
+          throw new WorkflowCoreError(
+            "system_owned_item_host_required",
+            "Only a trusted host runner can seed a system-owned item.",
+            { id: input.id, type: input.type },
+          );
+        }
+        if (!workflow?.def.systemOwnedItemTypes?.includes(input.type)) {
+          throw new WorkflowCoreError(
+            "item_type_not_system_owned",
+            `Workflow item type '${input.type}' is not system-owned.`,
+            { id: input.id, type: input.type },
+          );
+        }
+        const existing = current.items[input.type] ?? [];
+        if (existing.length > 0) {
+          throw systemOwnedItemError(input.id, input.type);
+        }
+        const item = assertJsonObject(input.item, "item");
+        const itemId = item.id;
+        if (typeof itemId !== "string" || itemId.length === 0) {
+          throw new WorkflowCoreError(
+            "item_id_required",
+            "Workflow item must include a non-empty string id.",
+            { id: input.id, type: input.type },
+          );
+        }
+        return {
+          state: {
+            ...current,
+            items: {
+              ...current.items,
+              [input.type]: [input.item],
+            },
+          },
+          eventKind: "item.system_seeded",
+          payload: { type: input.type, itemId },
+        };
+      },
+      true,
+    );
   }
 
   async updateItem(
     input: UpdateItemInput,
   ): Promise<WorkflowResultEnvelope<WorkflowInstance>> {
-    return this.mutate("update-item", input.id, (current) => {
-      const patch = assertJsonObject(input.patch, "patch");
-      const existing = current.items[input.type] ?? [];
-      const index = existing.findIndex(
-        (candidate) => itemIdOf(candidate) === input.itemId,
-      );
-      if (index < 0) {
-        throw new WorkflowCoreError(
-          "item_not_found",
-          `Workflow item '${input.itemId}' was not found in '${input.type}'.`,
-          { id: input.id, type: input.type, itemId: input.itemId },
+    return this.mutate(
+      "update-item",
+      input.id,
+      (current, workflow) => {
+        if (workflow?.def.systemOwnedItemTypes?.includes(input.type)) {
+          throw systemOwnedItemError(input.id, input.type);
+        }
+        const patch = assertJsonObject(input.patch, "patch");
+        const existing = current.items[input.type] ?? [];
+        const index = existing.findIndex(
+          (candidate) => itemIdOf(candidate) === input.itemId,
         );
-      }
-      const currentItem = assertJsonObject(existing[index], "existing item");
-      const nextItems = [...existing];
-      nextItems[index] = { ...currentItem, ...patch, id: input.itemId };
-      return {
-        state: {
-          ...current,
-          items: {
-            ...current.items,
-            [input.type]: nextItems,
+        if (index < 0) {
+          throw new WorkflowCoreError(
+            "item_not_found",
+            `Workflow item '${input.itemId}' was not found in '${input.type}'.`,
+            { id: input.id, type: input.type, itemId: input.itemId },
+          );
+        }
+        const currentItem = assertJsonObject(existing[index], "existing item");
+        const nextItems = [...existing];
+        nextItems[index] = { ...currentItem, ...patch, id: input.itemId };
+        return {
+          state: {
+            ...current,
+            items: {
+              ...current.items,
+              [input.type]: nextItems,
+            },
           },
-        },
-        eventKind: "item.updated",
-        payload: { type: input.type, itemId: input.itemId },
-      };
-    });
+          eventKind: "item.updated",
+          payload: { type: input.type, itemId: input.itemId },
+        };
+      },
+      true,
+    );
   }
 
   async linkItems(
@@ -396,6 +468,9 @@ export class WorkflowCommandRunner {
           `Interview '${input.interviewId}' is not declared on workflow '${workflow.def.name}'.`,
           { id: input.id, interviewId: input.interviewId },
         );
+      }
+      if (workflow.def.systemOwnedItemTypes?.includes(interview.itemType)) {
+        throw systemOwnedItemError(input.id, interview.itemType);
       }
       try {
         validateAnswers(interview, input.answers);
@@ -576,16 +651,16 @@ export class WorkflowCommandRunner {
           evaluatedAt: this.timestamp(),
         },
       );
-      const transitionKey = keyForTransition(transition);
+      const transitionKeyValue = transitionKey(transition);
       const gateMode =
-        current.gateConfig[transitionKey] ?? transition.defaultGate;
+        current.gateConfig[transitionKeyValue] ?? transition.defaultGate;
       if (gateMode === "hitl") {
         const satisfied = (current.satisfiedGates ?? []).find(
-          (gate) => gate.transitionKey === transitionKey,
+          (gate) => gate.transitionKey === transitionKeyValue,
         );
         if (!satisfied) {
           const existingGate = (current.openGates ?? []).find(
-            (gate) => gate.transitionKey === transitionKey,
+            (gate) => gate.transitionKey === transitionKeyValue,
           );
           const gate = existingGate ?? this.createGate(transition);
           const nextState = existingGate
@@ -627,10 +702,10 @@ export class WorkflowCommandRunner {
       const withGatesCleared: WorkflowInstance = {
         ...advanced,
         openGates: (advanced.openGates ?? []).filter(
-          (gate) => gate.transitionKey !== transitionKey,
+          (gate) => gate.transitionKey !== transitionKeyValue,
         ),
         satisfiedGates: (advanced.satisfiedGates ?? []).filter(
-          (gate) => gate.transitionKey !== transitionKey,
+          (gate) => gate.transitionKey !== transitionKeyValue,
         ),
       };
       const renderedArtifacts = await this.renderPhaseEntryArtifacts(
@@ -654,7 +729,7 @@ export class WorkflowCommandRunner {
             actor: this.actor,
             kind: "gate.auto_acked",
             payload: {
-              transitionKey,
+              transitionKey: transitionKeyValue,
               from: current.phase,
               to: input.to,
               defaultGate: transition.defaultGate,
@@ -954,13 +1029,13 @@ export class WorkflowCommandRunner {
   }
 
   private createGate(transition: Transition): WorkflowGate {
-    const transitionKey = keyForTransition(transition);
+    const key = transitionKey(transition);
     return {
       token: `ack_${this.idFactory()}`,
-      transitionKey,
+      transitionKey: key,
       from: transition.from,
       to: transition.to,
-      kind: transitionKey,
+      kind: key,
       issuedAt: this.timestamp(),
     };
   }
@@ -968,15 +1043,22 @@ export class WorkflowCommandRunner {
   private async mutate(
     command: string,
     id: string,
-    apply: (current: WorkflowInstance) => {
+    apply: (
+      current: WorkflowInstance,
+      workflow?: Workflow,
+    ) => {
       state: WorkflowInstance;
       eventKind: string;
       payload: JsonValue;
     },
+    resolveWorkflow = false,
   ): Promise<WorkflowResultEnvelope<WorkflowInstance>> {
     return this.wrap(command, async () => {
       const current = await this.store.get(id);
-      const mutation = apply(current);
+      const workflow = resolveWorkflow
+        ? await this.resolveForInstance(current)
+        : undefined;
+      const mutation = apply(current, workflow);
       const event = createEvent(
         {
           id: this.eventId(),
@@ -1149,8 +1231,12 @@ function objectValue(
   return value;
 }
 
-function keyForTransition(transition: Pick<Transition, "from" | "to">): string {
-  return `${transition.from}->${transition.to}`;
+function systemOwnedItemError(id: string, type: string): WorkflowCoreError {
+  return new WorkflowCoreError(
+    "item_system_owned",
+    `Workflow item type '${type}' is system-owned.`,
+    { id, type },
+  );
 }
 
 /**
@@ -1162,10 +1248,10 @@ function resolveGateConfig(
   def: WorkflowDef,
   input: Pick<CreateWorkflowInput, "gateMode" | "gates">,
 ): Record<string, GateMode> {
-  const keys = def.transitions.map(keyForTransition);
+  const keys = def.transitions.map(transitionKey);
   const config = Object.fromEntries(
     def.transitions.map((transition) => [
-      keyForTransition(transition),
+      transitionKey(transition),
       input.gateMode ?? transition.defaultGate,
     ]),
   );

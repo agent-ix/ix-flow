@@ -21,6 +21,9 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
     devDependencies:
+      '@agent-ix/ix-trace-ts':
+        specifier: ^0.1.1
+        version: 0.1.1(vitest@4.1.8)
       '@types/cross-spawn':
         specifier: ^6.0.6
         version: 6.0.6
@@ -71,6 +74,14 @@ packages:
 
   '@agent-ix/ix-cli-core@0.12.0':
     resolution: {integrity: sha512-6nu7twhNUIT6u+/Q8bhQ2doArdGxIsNK5r2pkV6jjcMMUpSKu+BNhnRd23QF1u6KUEbDEjQcffoYHDalijUWfA==}
+
+  '@agent-ix/ix-trace-ts@0.1.1':
+    resolution: {integrity: sha512-gSu/QgfiXLtIbg0eTrWO/zlLxq3KvhGuSgXElxPB/39M+BBhUaJNF1e0bpIdwBUdusjEsTp3mVsu5Ny6yI+9sg==}
+    peerDependencies:
+      vitest: ^4.1.2
+    peerDependenciesMeta:
+      vitest:
+        optional: true
 
   '@agent-ix/ix-ui-cli@0.4.10':
     resolution: {integrity: sha512-03CRd4KdX7IpcH7WOlQPjpPFzu4d+wW12IYKp1Q+kkakzjqveFJtSh6flP2Kez8QkFZQKI7aDdDTl8ewII3u/Q==}
@@ -1701,6 +1712,10 @@ snapshots:
       - bufferutil
       - react-devtools-core
       - utf-8-validate
+
+  '@agent-ix/ix-trace-ts@0.1.1(vitest@4.1.8)':
+    optionalDependencies:
+      vitest: 4.1.8(@types/node@25.9.1)(@vitest/coverage-v8@4.1.8)(vite@8.0.16(@types/node@25.9.1)(yaml@2.9.0))
 
   '@agent-ix/ix-ui-cli@0.4.10':
     dependencies:
