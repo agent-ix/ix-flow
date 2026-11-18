@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import { trace } from "@agent-ix/ix-trace-ts/vitest";
 import { loadSkill } from "../src/workflow-core/plugin";
 import { parseWorkflowDef } from "../src/workflow-core/definition.js";
-import { WorkflowCommandRunner } from "../src/workflow-runner/runner";
+import { WorkflowCommandRunner } from "../src/host.js";
 
 const fixture = fileURLToPath(
   new URL("./fixtures/external-invariant-provider.mjs", import.meta.url),

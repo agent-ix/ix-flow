@@ -25,6 +25,7 @@ export default defineConfig({
       entry: {
         index: "src/index.ts",
         cli: "src/cli.ts",
+        host: "src/host.ts",
       },
       name: "Ixflow",
       fileName: (format, entryName) => `${entryName}.js`,

@@ -199,11 +199,28 @@ results recorded for that run.
 
 Workflow definitions may list item types under `systemOwnedItemTypes`; every listed type must
 have an `itemSchemas` entry. The host may seed one item of each declared type while that item
-list is empty by calling `WorkflowCommandRunner.seedSystemOwnedItem` from a runner configured
-with a `service` actor. Agent-facing `add-item` rejects declared types even when their item
-list is empty. After host seeding, ix-flow rejects additions and updates for the type with
-`item_system_owned`. Use this for trusted host context such as a config root that a proposer
-must not redirect.
+list is empty through the host package entry point:
+
+```js
+import { WorkflowCommandRunner } from "@agent-ix/ix-flow/host";
+
+const host = new WorkflowCommandRunner({
+  cwd: projectRoot,
+  config: { stateDir },
+  actor: { kind: "service", id: "workflow-host" },
+});
+await host.seedSystemOwnedItem({
+  id: runId,
+  type: "quoin_context",
+  item: { id: "context", config_root: configRoot },
+});
+```
+
+The host must seed context before handing the run to an agent. Agent-facing `add-item` rejects
+declared types even when their item list is empty. After host seeding, ix-flow rejects
+additions and updates for the type with `item_system_owned`. Use this for trusted host context
+such as a config root that a proposer must not redirect. The `/host` package entry point is
+not available through an ix-flow CLI command.
 
 ## The run lifecycle
 
