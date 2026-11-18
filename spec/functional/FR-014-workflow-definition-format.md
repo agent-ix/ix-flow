@@ -39,13 +39,13 @@ unparseable, ix-flow SHALL fail with `definition_yaml_parse_failed`.
 
 ## Acceptance Criteria
 
-| ID          | Criteria                                                              | Verification                  |
-| ----------- | --------------------------------------------------------------------- | ----------------------------- |
-| FR-014-AC-1 | A valid definition loads and pins a `contentHash`                     | Test (tests/commands.test.ts) |
-| FR-014-AC-2 | `initialPhase` and transition endpoints must be declared phases       | Analysis                      |
-| FR-014-AC-3 | Interview `itemType` ∈ `itemSchemas` and template `phase` is declared | Analysis                      |
-| FR-014-AC-4 | An invalid definition fails with `definition_schema_invalid`          | Analysis                      |
-| FR-014-AC-5 | A definition may declare unique `systemOwnedItemTypes` entries that reference keys in `itemSchemas`; invalid or duplicate entries fail with `definition_schema_invalid` | Test |
+| ID          | Criteria                                                                                                                                                                | Verification                  |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| FR-014-AC-1 | A valid definition loads and pins a `contentHash`                                                                                                                       | Test (tests/commands.test.ts) |
+| FR-014-AC-2 | `initialPhase` and transition endpoints must be declared phases                                                                                                         | Analysis                      |
+| FR-014-AC-3 | Interview `itemType` ∈ `itemSchemas` and template `phase` is declared                                                                                                   | Analysis                      |
+| FR-014-AC-4 | An invalid definition fails with `definition_schema_invalid`                                                                                                            | Analysis                      |
+| FR-014-AC-5 | A definition may declare unique `systemOwnedItemTypes` entries that reference keys in `itemSchemas`; invalid or duplicate entries fail with `definition_schema_invalid` | Test                          |
 
 ## Dependencies
 

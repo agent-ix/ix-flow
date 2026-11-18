@@ -36,9 +36,9 @@ New ACs are not yet in the computed Test Matrix because this spec PR precedes th
 
 ## Findings
 
-| ID      | Severity | Summary                                                                                                    | Refs          |
-| ------- | -------- | ---------------------------------------------------------------------------------------------------------- | ------------- |
-| FND-001 | high     | Mutable provider context can still redirect the retained history store and reset the per-run denial count | FR-022:61-67  |
+| ID      | Severity | Summary                                                                                                   | Refs         |
+| ------- | -------- | --------------------------------------------------------------------------------------------------------- | ------------ |
+| FND-001 | high     | Mutable provider context can still redirect the retained history store and reset the per-run denial count | FR-022:61-67 |
 
 ## Validation
 
@@ -65,8 +65,8 @@ Quoin currently builds the design-gate history path from `quoin_context.config_r
 
 ## Dispositions
 
-| FND     | Outcome | Reason |
-| ------- | ------- | ------ |
+| FND     | Outcome | Reason                                                                                                                                   |
+| ------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | FND-001 | fixed   | FR-022 now requires the provider's history-location item type to be system-owned and rejects updates and replacement adds after seeding. |
 
 ### Round 1 evidence
