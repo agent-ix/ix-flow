@@ -33,11 +33,11 @@ leave the item unchanged after a rejected write. The initial and subsequent
 
 ## Acceptance Criteria
 
-| ID          | Criteria                                                | Verification                  |
-| ----------- | ------------------------------------------------------- | ----------------------------- |
-| FR-019-AC-1 | `update-item` patches the item addressed by `<item-id>` | Test (tests/commands.test.ts) |
-| FR-019-AC-2 | Updating a missing id fails with `item_not_found`       | Analysis                      |
-| FR-019-AC-3 | `update-item` to a seeded type declared in `systemOwnedItemTypes` fails with `item_system_owned` and leaves the seeded item unchanged | Test |
+| ID          | Criteria                                                                                                                              | Verification                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| FR-019-AC-1 | `update-item` patches the item addressed by `<item-id>`                                                                               | Test (tests/commands.test.ts) |
+| FR-019-AC-2 | Updating a missing id fails with `item_not_found`                                                                                     | Analysis                      |
+| FR-019-AC-3 | `update-item` to a seeded type declared in `systemOwnedItemTypes` fails with `item_system_owned` and leaves the seeded item unchanged | Test                          |
 
 ## Dependencies
 

@@ -47,7 +47,7 @@ Reviewed FR-022 for completeness, consistency, atomicity, and testability. The n
 ## Findings
 
 | ID      | Severity | Summary                                                                                           | Refs        |
-| ------- | -------- | ----------------------------------------------------------------------------------------------- | ----------- |
+| ------- | -------- | ------------------------------------------------------------------------------------------------- | ----------- |
 | FND-001 | medium   | AC-9 does not require a test to prove that only this run's recorded evaluator results are counted | FR-022-AC-9 |
 
 ### FND-001 after_excerpt
@@ -64,8 +64,8 @@ The behavior text requires a provider to count only evaluator results it recorde
 
 ## Dispositions
 
-| FND     | Outcome | Reason |
-| ------- | ------- | ------ |
+| FND     | Outcome | Reason                                                                                                                   |
+| ------- | ------- | ------------------------------------------------------------------------------------------------------------------------ |
 | FND-001 | fixed   | FR-022-AC-12 now requires a same-run result-count test covering forged item history and another run's evaluator results. |
 
 ### Round 1 evidence
@@ -76,10 +76,10 @@ The fixed criterion states:
 
 ## New findings (disposition pass 1)
 
-| ID      | Severity | Summary                                                                                                                | Refs                                                   |
-| ------- | -------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| FND-002 | high     | FR-014's WorkflowDef field list omits `systemOwnedItemTypes`, so the new protected item type cannot be declared       | FR-014:14-18; FR-019; FR-022                            |
-| FND-003 | medium   | `item_system_owned` is missing from the Outputs contract, and the add-item owner FR-009 remains unchanged             | FR-019:30-32; FR-019-AC-3; FR-019-AC-4; FR-009:25-27 |
+| ID      | Severity | Summary                                                                                                         | Refs                                                 |
+| ------- | -------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| FND-002 | high     | FR-014's WorkflowDef field list omits `systemOwnedItemTypes`, so the new protected item type cannot be declared | FR-014:14-18; FR-019; FR-022                         |
+| FND-003 | medium   | `item_system_owned` is missing from the Outputs contract, and the add-item owner FR-009 remains unchanged       | FR-019:30-32; FR-019-AC-3; FR-019-AC-4; FR-009:25-27 |
 
 ### FND-002 — WorkflowDef cannot declare system-owned item types
 

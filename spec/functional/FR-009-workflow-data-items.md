@@ -33,11 +33,11 @@ already contains an item, `add-item` SHALL fail with `item_system_owned`.
 
 ## Acceptance Criteria
 
-| ID          | Criteria                                               | Verification                  |
-| ----------- | ------------------------------------------------------ | ----------------------------- |
-| FR-009-AC-1 | `add-item` persists an item carrying a string `id`     | Test (tests/commands.test.ts) |
-| FR-009-AC-2 | Adding a duplicate id under an ordinary type fails with `item_already_exists` | Analysis |
-| FR-009-AC-3 | For a type declared in `systemOwnedItemTypes`, `add-item` persists one item while the type is empty and later adds fail with `item_system_owned` | Test |
+| ID          | Criteria                                                                                                                                         | Verification                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------- |
+| FR-009-AC-1 | `add-item` persists an item carrying a string `id`                                                                                               | Test (tests/commands.test.ts) |
+| FR-009-AC-2 | Adding a duplicate id under an ordinary type fails with `item_already_exists`                                                                    | Analysis                      |
+| FR-009-AC-3 | For a type declared in `systemOwnedItemTypes`, `add-item` persists one item while the type is empty and later adds fail with `item_system_owned` | Test                          |
 
 ## Dependencies
 

@@ -26,9 +26,9 @@ Reviewed FR-022's provider trust boundary, identity key, and retained-history be
 
 ## Findings
 
-| ID      | Severity | Summary                                                                                                          | Refs          |
-| ------- | -------- | ---------------------------------------------------------------------------------------------------------------- | ------------- |
-| FND-001 | high     | Mutable `quoin_context.config_root` can redirect the provider history file and reset the evaluator denial count | FR-022:60-67  |
+| ID      | Severity | Summary                                                                                                         | Refs         |
+| ------- | -------- | --------------------------------------------------------------------------------------------------------------- | ------------ |
+| FND-001 | high     | Mutable `quoin_context.config_root` can redirect the provider history file and reset the evaluator denial count | FR-022:60-67 |
 
 ### FND-001 after_excerpt
 
@@ -48,8 +48,8 @@ The engine-owned `run.instance_id` prevents changing the run key itself, but Quo
 
 ## Dispositions
 
-| FND     | Outcome | Reason |
-| ------- | ------- | ------ |
+| FND     | Outcome | Reason                                                                                                                    |
+| ------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
 | FND-001 | fixed   | FR-022 now makes the history-location item system-owned after bootstrap seeding and rejects updates and replacement adds. |
 
 ### Round 1 evidence
