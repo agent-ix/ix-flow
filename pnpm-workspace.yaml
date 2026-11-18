@@ -5,3 +5,8 @@ minimumReleaseAgeExclude:
 updateConfig:
   ignoreDependencies:
     - typescript
+
+auditConfig:
+  ignoreGhsas:
+    # Remove when picomatch ships a patched release or @oclif/core drops picomatch; tracked by TL-445.
+    - GHSA-fc5q-39xc-vjpf
