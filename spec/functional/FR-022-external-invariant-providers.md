@@ -43,8 +43,34 @@ JSON request to standard input with:
 
 - `protocol`: the declared request protocol;
 - `invariants`: the ordered external invariant references;
-- `instance`: exactly the current `defName`, `items`, and `gateConfig` values;
+- `instance`: the current `defName`, `items`, and `gateConfig` values;
+- `run`: engine-owned `instance_id`, `state_version`, `state`, and
+  `transition_key` values for the instance and transition being evaluated;
 - `evaluated_at`: the runner's current RFC 3339 evaluation instant.
+
+ix-flow SHALL derive the `run` values from the current engine instance and
+selected transition, not from workflow items or provider output.
+
+- The runner SHALL set `instance_id` to the stable engine instance ID.
+- The runner SHALL set `state_version` to the current persisted engine version.
+- The runner SHALL set `state` to the current phase before the transition.
+- The runner SHALL set `transition_key` to the canonical `<from>-><to>` key
+  used by the runner.
+
+ix-flow SHALL include these values outside `instance.items`, so item patches
+cannot set or override run identity or transition provenance. A provider that
+retains evaluator history SHALL key that history by `run.instance_id`. The
+provider SHALL count only evaluator results it recorded for that same run;
+proposer-mutable `instance.items` SHALL NOT be treated as run identity or prior
+evaluator results. When provider history uses a workflow item to select its
+storage location, the workflow SHALL declare that item type in
+`systemOwnedItemTypes` and SHALL seed the item before proposer control begins.
+When a seeded system-owned item type contains an item, ix-flow SHALL reject
+`update-item` and every later `add-item` to that type with
+`item_system_owned`, as specified by FR-019. The caller-facing provider
+documentation SHALL describe this request shape, state that ordinary items are
+proposer mutable and do not establish run provenance or evaluator history, and
+explain how a provider's history-location context is protected.
 
 The provider SHALL return one JSON result on standard output whose `protocol`
 equals the declared result protocol and whose `outcomes` preserve the request
@@ -82,6 +108,10 @@ invariant-refusal result.
 | FR-022-AC-6 | Malformed/incomplete output, result-protocol mismatch, and unrequested outcome names produce their distinct stable provider-boundary codes                             | Test (tests/external-provider.test.ts) |
 | FR-022-AC-7 | The provider command receives literal arguments, including through Windows npm launchers                                                                               | Test (tests/external-provider.test.ts) |
 | FR-022-AC-8 | An unregistered transition invariant retains `transition_invariant_unregistered` and does not launch the external provider                                             | Test (tests/external-provider.test.ts) |
+| FR-022-AC-9 | Each external provider request contains engine-derived run fields outside `instance.items`; patching ordinary items with forged run fields or evaluator history cannot override the run projection | Test |
+| FR-022-AC-10 | The caller documentation describes the provider request fields, states that proposer-mutable items do not establish run provenance or evaluator history, and explains how history-location context is protected | Inspection |
+| FR-022-AC-11 | After a history-location context item is seeded under a declared system-owned type, proposer attempts to update its `config_root` or add a replacement item fail with `item_system_owned`; provider storage continues to use the seeded location | Test |
+| FR-022-AC-12 | A provider counts only evaluator results recorded with the current `run.instance_id`; forged ordinary-item history and evaluator results recorded for a different run do not advance the current run's retry count | Test |
 
 ## Dependencies
 

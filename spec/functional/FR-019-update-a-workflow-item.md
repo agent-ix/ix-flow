@@ -16,6 +16,11 @@ a JSON patch to the item addressed by `<item-id>` under the given type,
 accepting the patch inline or from a file via `--patch-file <path>`. Updating an
 item id that does not exist SHALL fail with `item_not_found`.
 
+A workflow definition MAY declare `systemOwnedItemTypes`. For a declared type,
+`update-item` SHALL reject writes with `item_system_owned`. The runner SHALL
+leave the item unchanged after a rejected write. The initial and subsequent
+`add-item` behavior for declared types is specified by FR-009.
+
 ## Inputs
 
 - `<run-id>`, `<type>`, `<item-id>`
@@ -23,7 +28,8 @@ item id that does not exist SHALL fail with `item_not_found`.
 
 ## Outputs
 
-- The patched item on the run, or an `item_not_found` error
+- The patched item on the run, an `item_not_found` error, or an
+  `item_system_owned` error
 
 ## Acceptance Criteria
 
@@ -31,6 +37,7 @@ item id that does not exist SHALL fail with `item_not_found`.
 | ----------- | ------------------------------------------------------- | ----------------------------- |
 | FR-019-AC-1 | `update-item` patches the item addressed by `<item-id>` | Test (tests/commands.test.ts) |
 | FR-019-AC-2 | Updating a missing id fails with `item_not_found`       | Analysis                      |
+| FR-019-AC-3 | `update-item` to a seeded type declared in `systemOwnedItemTypes` fails with `item_system_owned` and leaves the seeded item unchanged | Test |
 
 ## Dependencies
 
