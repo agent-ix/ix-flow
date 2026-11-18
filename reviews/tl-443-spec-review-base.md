@@ -47,8 +47,30 @@ New ACs are not yet in the computed Test Matrix because this spec PR precedes th
 - `quire validate --scope . 'spec/**/*.md' --summary`: exit 3 due the unchanged `spec/log.md` document's unregistered `log` type; remaining warnings are outside this PR.
 - `quire matrix --scope . --format tsv`: FR-022-AC-9 is untagged and AC-10 is method-without-symbol until the follow-up code PR adds the test and caller documentation.
 
+### FND-001 after_excerpt
+
+```text
+When provider history uses a workflow item to select its storage location, the workflow SHALL declare that item type in
+`systemOwnedItemTypes` and SHALL seed the item before proposer control begins.
+When a seeded system-owned item type contains an item, ix-flow SHALL reject
+`update-item` and every later `add-item` to that type with
+`item_system_owned`, as specified by FR-019.
+```
+
 ## Findings Detail
 
 ### FND-001 — Mutable provider context can still redirect the retained history store
 
 Quoin currently builds the design-gate history path from `quoin_context.config_root` and the run ID. An agent can patch that ordinary item to a new config root, so the next provider invocation opens an empty state file even though `run.instance_id` is unchanged. The contract must protect the state-store location as well as the run key: require the relevant context to be host-owned outside mutable items, or require a declared protected item type whose updates are rejected. AC-9 should verify that changing the mutable config root cannot reset the recorded evaluator history.
+
+## Dispositions
+
+| FND     | Outcome | Reason |
+| ------- | ------- | ------ |
+| FND-001 | fixed   | FR-022 now requires the provider's history-location item type to be system-owned and rejects updates and replacement adds after seeding. |
+
+### Round 1 evidence
+
+The fixed contract states:
+
+> When provider history uses a workflow item to select its storage location, the workflow SHALL declare that item type in `systemOwnedItemTypes` and SHALL seed the item before proposer control begins. When a seeded system-owned item type contains an item, ix-flow SHALL reject `update-item` and every later `add-item` to that type with `item_system_owned`, as specified by FR-019.

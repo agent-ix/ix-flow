@@ -30,8 +30,30 @@ Reviewed FR-022's provider trust boundary, identity key, and retained-history be
 | ------- | -------- | ---------------------------------------------------------------------------------------------------------------- | ------------- |
 | FND-001 | high     | Mutable `quoin_context.config_root` can redirect the provider history file and reset the evaluator denial count | FR-022:60-67  |
 
+### FND-001 after_excerpt
+
+```text
+When provider history uses a workflow item to select its storage location, the workflow SHALL declare that item type in
+`systemOwnedItemTypes` and SHALL seed the item before proposer control begins.
+When a seeded system-owned item type contains an item, ix-flow SHALL reject
+`update-item` and every later `add-item` to that type with
+`item_system_owned`, as specified by FR-019.
+```
+
 ## Findings Detail
 
 ### FND-001 — Mutable context redirects retained history
 
 The engine-owned `run.instance_id` prevents changing the run key itself, but Quoin's persisted evaluator history is stored below the `config_root` supplied through the ordinary `quoin_context` item. Patching that item to another root changes the history file path and makes prior denials disappear. The requirement must make the provider's state-store location host-owned or protect the item supplying it; AC-9 should cover this reset attempt.
+
+## Dispositions
+
+| FND     | Outcome | Reason |
+| ------- | ------- | ------ |
+| FND-001 | fixed   | FR-022 now makes the history-location item system-owned after bootstrap seeding and rejects updates and replacement adds. |
+
+### Round 1 evidence
+
+The fixed contract states:
+
+> When provider history uses a workflow item to select its storage location, the workflow SHALL declare that item type in `systemOwnedItemTypes` and SHALL seed the item before proposer control begins. When a seeded system-owned item type contains an item, ix-flow SHALL reject `update-item` and every later `add-item` to that type with `item_system_owned`, as specified by FR-019.
