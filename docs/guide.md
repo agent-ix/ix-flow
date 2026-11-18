@@ -199,7 +199,9 @@ results recorded for that run.
 
 Workflow definitions may list item types under `systemOwnedItemTypes`; every listed type must
 have an `itemSchemas` entry. The host may seed one item of each declared type while that item
-list is empty. After seeding, ix-flow rejects additions and updates for the type with
+list is empty by calling `WorkflowCommandRunner.seedSystemOwnedItem` from a runner configured
+with a `service` actor. Agent-facing `add-item` rejects declared types even when their item
+list is empty. After host seeding, ix-flow rejects additions and updates for the type with
 `item_system_owned`. Use this for trusted host context such as a config root that a proposer
 must not redirect.
 

@@ -11,6 +11,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { trace } from "@agent-ix/ix-trace-ts/vitest";
 import { loadSkill } from "../src/workflow-core/plugin";
 import { parseWorkflowDef } from "../src/workflow-core/definition.js";
 import { WorkflowCommandRunner } from "../src/workflow-runner/runner";
@@ -131,7 +132,6 @@ function invocationCount(harness: Harness): number {
     .length;
 }
 
-// Trace: FR-014-AC-5.
 test.each([
   {
     systemOwnedItemTypes: ["context", "context"],
@@ -146,6 +146,7 @@ test.each([
 ])(
   "rejects invalid system-owned item declarations ($message)",
   ({ systemOwnedItemTypes, itemSchemas, message }) => {
+    trace("FR-014-AC-5");
     expect(() =>
       parseWorkflowDef({
         name: "example",
@@ -159,7 +160,6 @@ test.each([
   },
 );
 
-// Trace: FR-014-AC-5.
 test("keeps the system-owned item declaration absent from legacy definitions", () => {
   const definition = parseWorkflowDef({
     name: "example",
@@ -264,15 +264,40 @@ test("sends the closed instance projection and runner evaluation instant", async
   }
 });
 
-// Trace: FR-019-AC-3, FR-019-AC-4, FR-022-AC-9, FR-022-AC-11.
 test("keeps run provenance engine-owned and protects system-owned items", async () => {
+  trace("FR-019-AC-3", "FR-022-AC-9", "FR-022-AC-11");
   const harness = createHarness({
     invariants: ["external.pass"],
     systemOwnedItemTypes: ["quoin_context"],
   });
   try {
     const id = await createRun(harness);
-    const seeded = await harness.runner.addItem({
+    expect(
+      await harness.runner.addItem({
+        id,
+        type: "quoin_context",
+        item: { id: "attacker-context", config_root: "/attacker/config" },
+      }),
+    ).toMatchObject({ ok: false, error: { code: "item_system_owned" } });
+    expect(
+      await harness.runner.seedSystemOwnedItem({
+        id,
+        type: "quoin_context",
+        item: { id: "untrusted-seed", config_root: "/attacker/config" },
+      }),
+    ).toMatchObject({
+      ok: false,
+      error: { code: "system_owned_item_host_required" },
+    });
+
+    const hostRunner = new WorkflowCommandRunner({
+      cwd: harness.work,
+      config: { stateDir: harness.stateDir },
+      actor: { kind: "service", id: "quoin-host" },
+      now: () => fixedNow,
+      idFactory: () => "fixed",
+    });
+    const seeded = await hostRunner.seedSystemOwnedItem({
       id,
       type: "quoin_context",
       item: { id: "context", config_root: "/trusted/config" },

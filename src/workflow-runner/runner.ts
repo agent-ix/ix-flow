@@ -280,13 +280,10 @@ export class WorkflowCommandRunner {
       "add-item",
       input.id,
       (current, workflow) => {
-        const existing = current.items[input.type] ?? [];
-        if (
-          workflow?.def.systemOwnedItemTypes?.includes(input.type) &&
-          existing.length > 0
-        ) {
+        if (workflow?.def.systemOwnedItemTypes?.includes(input.type)) {
           throw systemOwnedItemError(input.id, input.type);
         }
+        const existing = current.items[input.type] ?? [];
         const item = assertJsonObject(input.item, "item");
         const itemId = item.id;
         if (typeof itemId !== "string" || itemId.length === 0) {
@@ -312,6 +309,61 @@ export class WorkflowCommandRunner {
             },
           },
           eventKind: "item.added",
+          payload: { type: input.type, itemId },
+        };
+      },
+      true,
+    );
+  }
+
+  /**
+   * Seed one declared system-owned item from a trusted host runner. The host
+   * must construct this runner with a `service` actor; agent-facing add-item
+   * and recipe operations cannot initialize protected context.
+   */
+  async seedSystemOwnedItem(
+    input: AddItemInput,
+  ): Promise<WorkflowResultEnvelope<WorkflowInstance>> {
+    return this.mutate(
+      "seed-system-owned-item",
+      input.id,
+      (current, workflow) => {
+        if (this.actor.kind !== "service") {
+          throw new WorkflowCoreError(
+            "system_owned_item_host_required",
+            "Only a trusted host runner can seed a system-owned item.",
+            { id: input.id, type: input.type },
+          );
+        }
+        if (!workflow?.def.systemOwnedItemTypes?.includes(input.type)) {
+          throw new WorkflowCoreError(
+            "item_type_not_system_owned",
+            `Workflow item type '${input.type}' is not system-owned.`,
+            { id: input.id, type: input.type },
+          );
+        }
+        const existing = current.items[input.type] ?? [];
+        if (existing.length > 0) {
+          throw systemOwnedItemError(input.id, input.type);
+        }
+        const item = assertJsonObject(input.item, "item");
+        const itemId = item.id;
+        if (typeof itemId !== "string" || itemId.length === 0) {
+          throw new WorkflowCoreError(
+            "item_id_required",
+            "Workflow item must include a non-empty string id.",
+            { id: input.id, type: input.type },
+          );
+        }
+        return {
+          state: {
+            ...current,
+            items: {
+              ...current.items,
+              [input.type]: [input.item],
+            },
+          },
+          eventKind: "item.system_seeded",
           payload: { type: input.type, itemId },
         };
       },
