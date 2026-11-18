@@ -61,6 +61,12 @@ export interface TransitionResult {
   transition: Transition;
 }
 
+export function transitionKey(
+  transition: Pick<Transition, "from" | "to">,
+): string {
+  return `${transition.from}->${transition.to}`;
+}
+
 export function findTransition(
   definition: WorkflowDef,
   from: string,

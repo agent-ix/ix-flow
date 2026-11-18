@@ -63,6 +63,7 @@ export {
   advanceInstancePhase,
   assertTransitionAllowed,
   findTransition,
+  transitionKey,
   type InvariantContext,
   type InvariantBatchContext,
   type InvariantBatchProvider,

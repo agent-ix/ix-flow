@@ -176,6 +176,7 @@ export const WorkflowDefSchema = z
     phases: z.array(PhaseSchema).min(1),
     transitions: z.array(TransitionSchema).default([]),
     itemSchemas: z.record(z.string(), z.unknown()).default({}),
+    systemOwnedItemTypes: z.array(z.string().min(1)).optional(),
     linkSchemas: z.record(z.string(), z.unknown()).default({}),
     artifactTemplates: z.record(z.string(), ArtifactTemplateSchema).optional(),
     interviews: z.record(z.string(), InterviewSchema).optional(),
@@ -205,6 +206,26 @@ export const WorkflowDefSchema = z
           path: ["transitions", index, "to"],
           message: "transition.to must reference a declared phase",
         });
+      }
+    }
+    if (def.systemOwnedItemTypes) {
+      const seen = new Set<string>();
+      for (const [index, itemType] of def.systemOwnedItemTypes.entries()) {
+        if (seen.has(itemType)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["systemOwnedItemTypes", index],
+            message: "system_owned_item_type_duplicate",
+          });
+        }
+        seen.add(itemType);
+        if (!Object.prototype.hasOwnProperty.call(def.itemSchemas, itemType)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["systemOwnedItemTypes", index],
+            message: `system_owned_item_type_unknown: ${itemType}`,
+          });
+        }
       }
     }
     if (def.interviews) {
